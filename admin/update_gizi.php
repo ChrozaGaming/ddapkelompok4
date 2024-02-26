@@ -1,5 +1,5 @@
 <?php
-$conn = include 'db/configdb.php';
+$conn = include '../db/configdb.php';
 
 if (!isset($_POST['province_id']) || !isset($_POST['gizi_value'])) {
     die("province_id atau gizi_value tidak ditemukan dalam form");
