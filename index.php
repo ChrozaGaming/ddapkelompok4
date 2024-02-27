@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Highcharts Maps Demo</title>
+    <title>Peta Penyebaran Gizi</title>
     <style>
         #container {
             height: 500px;
@@ -55,7 +55,7 @@
             },
 
             title: {
-                text: 'Highcharts Maps basic demo'
+                text: 'Peta Penyebaran Gizi di Indonesia'
             },
 
             subtitle: {

@@ -4,7 +4,18 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6f0ad9c7-a09b-431c-bb60-1c58a66c3303" name="Changes" comment="Update project structure and enhance workspace settings&#10;&#10;This commit focuses on rearranging certain PHP files under admin directory, removing the redundant README.md file, and fine-tuning many settings in .idea/workspace.xml. Such updates strive for more standardized development settings and efiicient project structure organization enhancing ease of access and management." />
+    <list default="true" id="6f0ad9c7-a09b-431c-bb60-1c58a66c3303" name="Changes" comment="Update project structure and enhance workspace settings&#10;&#10;This commit focuses on rearranging certain PHP files under admin directory, removing the redundant README.md file, and fine-tuning many settings in .idea/workspace.xml. Such updates strive for more standardized development settings and efiicient project structure organization enhancing ease of access and management.">
+      <change afterPath="$PROJECT_DIR$/server.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/user/geografis.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/user/get_provinsi.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/user/register.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/user/registertest.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/user/registeruser.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/ddapkelompok4.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/ddapkelompok4.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/index.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/map/data/IDN.json" beforeDir="false" afterPath="$PROJECT_DIR$/map/data/IDN.json" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -13,6 +24,13 @@
   <component name="ComposerSettings" notifyAboutMissingVendor="false" synchronizationState="SYNCHRONIZE">
     <pharConfigPath>$PROJECT_DIR$/composer.json</pharConfigPath>
     <execution />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="JavaScript File" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <excluded-from-favorite>
@@ -75,16 +93,17 @@
   </component>
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
+    &quot;PHPUnit.ddapkelompok4.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/wamp64/www/ddapkelompok4&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/hilmy/Downloads/data-indonesia-master/data-indonesia-master&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;GitLink.ProjectSettings&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;discord-application&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
@@ -110,6 +129,11 @@
       <updated>1708922463178</updated>
       <workItem from="1708922464282" duration="473000" />
       <workItem from="1708922982743" duration="1347000" />
+      <workItem from="1708929444112" duration="1329000" />
+      <workItem from="1708944654015" duration="9911000" />
+      <workItem from="1708968469449" duration="178000" />
+      <workItem from="1708968666012" duration="2124000" />
+      <workItem from="1709001946246" duration="2000" />
     </task>
     <task id="LOCAL-00001" summary="first initialization">
       <option name="closed" value="true" />
@@ -177,5 +201,9 @@
     <MESSAGE value="Reorganized project structure and updated configuration files&#10;&#10;This commit includes shifting update_gizi.php and data_gizi.php into admin folder, deletion of README.md, and changes to numerous configuration settings in .idea/workspace.xml. The changes standardize development settings and better organize the project structure for easier access and management." />
     <MESSAGE value="Update project structure and enhance workspace settings&#10;&#10;This commit focuses on rearranging certain PHP files under admin directory, removing the redundant README.md file, and fine-tuning many settings in .idea/workspace.xml. Such updates strive for more standardized development settings and efiicient project structure organization enhancing ease of access and management." />
     <option name="LAST_COMMIT_MESSAGE" value="Update project structure and enhance workspace settings&#10;&#10;This commit focuses on rearranging certain PHP files under admin directory, removing the redundant README.md file, and fine-tuning many settings in .idea/workspace.xml. Such updates strive for more standardized development settings and efiicient project structure organization enhancing ease of access and management." />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
   </component>
 </project>
