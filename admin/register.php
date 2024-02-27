@@ -14,17 +14,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
-    $sql = "SELECT * FROM users WHERE email = '$email' OR no_hp = '$no_hp'";
+    $sql = "SELECT * FROM usersadmin WHERE email = '$email' OR no_hp = '$no_hp'";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
         echo "Email or phone number already registered";
     } else {
-        // Hash the password
-        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-
-        $sql = "INSERT INTO users (namalengkap, no_hp, provinsi, kabupaten, kecamatan, kelurahan, alamat, email, password)
-                VALUES ('$namalengkap', '$no_hp', '$provinsi', '$kabupaten', '$kecamatan', '$kelurahan', '$alamat', '$email', '$hashed_password')";
+        $sql = "INSERT INTO usersadmin (namalengkap, no_hp, provinsi, kabupaten, kecamatan, kelurahan, alamat, email, password, role)
+                VALUES ('$namalengkap', '$no_hp', '$provinsi', '$kabupaten', '$kecamatan', '$kelurahan', '$alamat', '$email', '$hashed_password', 'admin')";
 
         if ($conn->query($sql) === TRUE) {
             echo "New record created successfully";
@@ -33,7 +30,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 }
-
 
 $conn->close();
 ?>
@@ -44,11 +40,11 @@ $conn->close();
 <head>
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="../assets/css/user/register.css">
+    <link rel="stylesheet" href="../assets/css/admin/register.css">
 </head>
 <body>
 <div class="container mt-5">
-    <h1 class="text-center font-weight-bold">Form Pendaftaran - User</h1>
+    <h1 class="text-center font-weight-bold">Form Pendaftaran - Admin</h1>
     <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
         <!-- Rest of your form... -->
     </form>
@@ -99,9 +95,7 @@ $conn->close();
 
 
 
-
-
-<script src="../assets/ts/user/register.ts"></script>
+<script src="../assets/ts/admin/register.ts"></script>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
@@ -258,5 +252,3 @@ $conn->close();
         }
     });
 </script>
-
-
