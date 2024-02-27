@@ -5,16 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6f0ad9c7-a09b-431c-bb60-1c58a66c3303" name="Changes" comment="Update project structure and enhance workspace settings&#10;&#10;This commit focuses on rearranging certain PHP files under admin directory, removing the redundant README.md file, and fine-tuning many settings in .idea/workspace.xml. Such updates strive for more standardized development settings and efiicient project structure organization enhancing ease of access and management.">
-      <change afterPath="$PROJECT_DIR$/server.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user/geografis.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user/get_provinsi.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user/register.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user/registertest.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user/registeruser.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/ddapkelompok4.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/ddapkelompok4.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/wilayah_indonesia.sql" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/index.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/map/data/IDN.json" beforeDir="false" afterPath="$PROJECT_DIR$/map/data/IDN.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/apiwilayah/apiwilayah.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/js/user/register.ts" beforeDir="false" afterPath="$PROJECT_DIR$/assets/ts/user/register.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user/register.php" beforeDir="false" afterPath="$PROJECT_DIR$/user/register.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -29,6 +24,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="JavaScript File" />
+        <option value="TypeScript File" />
       </list>
     </option>
   </component>
@@ -104,6 +100,7 @@
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;discord-application&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;C:\\Users\\hilmy\\AppData\\Local\\Programs\\PhpStorm\\plugins\\javascript-impl\\jsLanguageServicesImpl\\external&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
@@ -134,6 +131,9 @@
       <workItem from="1708968469449" duration="178000" />
       <workItem from="1708968666012" duration="2124000" />
       <workItem from="1709001946246" duration="2000" />
+      <workItem from="1709017363155" duration="245000" />
+      <workItem from="1709017720608" duration="11000" />
+      <workItem from="1709017764457" duration="930000" />
     </task>
     <task id="LOCAL-00001" summary="first initialization">
       <option name="closed" value="true" />
