@@ -60,7 +60,7 @@ $conn->close();
             <a class="nav-link" href="registersupplier.php">Register Supplier</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="registeruser.php">License Key</a>
+            <a class="nav-link" href="userrequest.php">User Request</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="information.php">Information</a>

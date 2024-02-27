@@ -9,7 +9,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $kecamatan = isset($_POST['kecamatan']) ? $_POST['kecamatan'] : '';
     $kelurahan = isset($_POST['kelurahan']) ? $_POST['kelurahan'] : '';
     $alamat = $_POST['alamat'];
-    $email = $_POST['email'];
+    $email = mysqli_real_escape_string($conn, $_POST['email']);
     $password = $_POST['password'];
 
     $hashed_password = password_hash($password, PASSWORD_DEFAULT);

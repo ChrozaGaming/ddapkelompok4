@@ -14,26 +14,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
-    $sql = "SELECT * FROM users WHERE email = '$email' OR no_hp = '$no_hp'";
-    $result = $conn->query($sql);
+    $sql = "INSERT INTO userrequests (namalengkap, no_hp, provinsi, kabupaten, kecamatan, kelurahan, alamat, email, password)
+        VALUES ('$namalengkap', '$no_hp', '$provinsi', '$kabupaten', '$kecamatan', '$kelurahan', '$alamat', '$email', '$hashed_password')";
 
-    if ($result->num_rows > 0) {
-        echo "Email or phone number already registered";
+    if ($conn->query($sql) === TRUE) {
+        header('Location: waitinglist.php');
     } else {
-        // Hash the password
-        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-
-        $sql = "INSERT INTO users (namalengkap, no_hp, provinsi, kabupaten, kecamatan, kelurahan, alamat, email, password)
-                VALUES ('$namalengkap', '$no_hp', '$provinsi', '$kabupaten', '$kecamatan', '$kelurahan', '$alamat', '$email', '$hashed_password')";
-
-        if ($conn->query($sql) === TRUE) {
-            echo "New record created successfully";
-        } else {
-            echo "Error: " . $sql . "<br>" . $conn->error;
-        }
+        echo "Error: " . $sql . "<br>" . $conn->error;
     }
 }
-
 
 $conn->close();
 ?>
@@ -95,10 +84,6 @@ $conn->close();
 </form>
 </body>
 </html>
-
-
-
-
 
 
 <script src="../assets/ts/user/register.ts"></script>
