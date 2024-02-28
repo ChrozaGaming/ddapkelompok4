@@ -49,7 +49,7 @@ $conn->close();
     </div>
     <div class="form-group">
         <label for="no_hp">No HP:</label>
-        <input type="text" class="form-control" id="no_hp" name="no_hp">
+        <input type="text" class="form-control" id="no_hp" name="no_hp" pattern="^[0-9]*$" title="Hanya angka yang diperbolehkan dan tidak boleh ada spasi atau simbol lainnya">
     </div>
     <div class="form-group">
         <label for="select2-provinsi">Provinsi</label>
