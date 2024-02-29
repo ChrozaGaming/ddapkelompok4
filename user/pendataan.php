@@ -18,6 +18,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } else {
         echo "Error: " . $sql . "<br>" . $conn->error;
     }
+
+    // Redirect ke halaman yang sama
+    header("Location: pendataan.php");
+    exit;
 }
 
 $conn->close();
@@ -114,11 +118,14 @@ if (isset($_SESSION['message'])) {
                     });
 
                     document.getElementById('resetInput').addEventListener('click', function () {
-                        var inputTable = document.getElementById('inputTable');
-                        while (inputTable.children.length > 1) {
-                            inputTable.removeChild(inputTable.lastChild);
+                        var confirmation = confirm("Apakah anda yakin untuk mereset row yang sudah anda buat?");
+                        if (confirmation) {
+                            var inputTable = document.getElementById('inputTable');
+                            while (inputTable.children.length > 1) {
+                                inputTable.removeChild(inputTable.lastChild);
+                            }
+                            penghitung = 2;
                         }
-                        counter = 2;
                     });
                 </script>
                 <div class="form-group">
