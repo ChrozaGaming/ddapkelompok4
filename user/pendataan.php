@@ -1,9 +1,11 @@
 <?php
+session_start();
 include '../db/configdb.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $lurah_desa = mysqli_real_escape_string($conn, $_POST['lurah_desa']);
-    $jenis_pangan = mysqli_real_escape_string($conn, $_POST['jenis_pangan']);
+    $jenis_pangan = implode(", ", $_POST['jenis_pangan']); // handle jenis_pangan as an array
+    $jenis_pangan = mysqli_real_escape_string($conn, $jenis_pangan);
     $berat = mysqli_real_escape_string($conn, $_POST['berat']);
     $distributor = mysqli_real_escape_string($conn, $_POST['distributor']);
     $gps = mysqli_real_escape_string($conn, $_POST['gps']);
@@ -12,13 +14,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         VALUES ('$lurah_desa', '$jenis_pangan', '$berat', '$distributor', '$gps')";
 
     if ($conn->query($sql) === TRUE) {
-        echo "Data berhasil disimpan.";
+        $_SESSION['message'] = "Data berhasil disimpan.";
     } else {
         echo "Error: " . $sql . "<br>" . $conn->error;
     }
 }
 
 $conn->close();
+
+if (isset($_SESSION['message'])) {
+    echo "<script>alert('" . $_SESSION['message'] . "')</script>";
+    unset($_SESSION['message']);
+}
 ?>
 
 <!DOCTYPE html>
@@ -27,41 +34,95 @@ $conn->close();
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css"/>
     <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
 </head>
 <body>
 <div class="container mt-5">
     <ul class="nav nav-tabs" id="myTab" role="tablist">
         <li class="nav-item">
-            <a class="nav-link active" id="pengajuan-tab" data-toggle="tab" href="#pengajuan" role="tab" aria-controls="pengajuan" aria-selected="true">Pengajuan</a>
+            <a class="nav-link active" id="pengajuan-tab" data-toggle="tab" href="#pengajuan" role="tab"
+               aria-controls="pengajuan" aria-selected="true">Pengajuan</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" id="informasiPangan-tab" data-toggle="tab" href="#informasiPangan" role="tab" aria-controls="informasiPangan" aria-selected="false">Informasi Pangan</a>
+            <a class="nav-link" id="informasiPangan-tab" data-toggle="tab" href="#informasiPangan" role="tab"
+               aria-controls="informasiPangan" aria-selected="false">Informasi Pangan</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" id="pendistribusian-tab" data-toggle="tab" href="#pendistribusian" role="tab" aria-controls="pendistribusian" aria-selected="false">Pendistribusian</a>
+            <a class="nav-link" id="pendistribusian-tab" data-toggle="tab" href="#pendistribusian" role="tab"
+               aria-controls="pendistribusian" aria-selected="false">Pendistribusian</a>
         </li>
     </ul>
     <div class="tab-content" id="myTabContent">
         <div class="tab-pane fade show active" id="pengajuan" role="tabpanel" aria-labelledby="pengajuan-tab">
             <!-- Form Pengajuan -->
-            <form id="formInformasiPangan" method="post" action="submit_informasi_pangan.php">
+            <form id="formInformasiPangan" method="post" action="">
                 <div class="form-group">
                     <label for="lurah_desa">Lurah/Desa:</label>
                     <input type="text" class="form-control" id="lurah_desa" name="lurah_desa">
                 </div>
-                <div class="form-group">
-                    <label for="jenis_pangan">Jenis Pangan:</label>
-                    <input type="text" class="form-control" id="jenis_pangan" name="jenis_pangan">
+
+                <style>
+                    #inputTable {
+                        display: flex;
+                        flex-wrap: wrap;
+                        justify-content: start;
+                    }
+
+                    .form-group {
+                        flex: 0 0 auto;
+                        margin-right: 10px;
+                    }
+                </style>
+
+                <div id="inputTable">
+                    <div class="form-group">
+                        <label for="jenis_pangan1">Jenis Pangan 1:</label>
+                        <input type="text" class="form-control" id="jenis_pangan1" name="jenis_pangan[]">
+                    </div>
                 </div>
+                <button type="button" id="tambahInput" class="btn btn-secondary">Tambah</button>
+                <button type="button" id="undoInput" class="btn btn-secondary">Hapus</button>
+                <button type="button" id="resetInput" class="btn btn-secondary">Reset</button>
+
+                <script>
+                    var penghitung = 2;
+                    document.getElementById('tambahInput').addEventListener('click', function () {
+                        var inputTable = document.getElementById('inputTable');
+                        var newFormGroup = document.createElement('div');
+                        newFormGroup.className = 'form-group';
+                        var newLabel = document.createElement('label');
+                        newLabel.textContent = 'Jenis Pangan ' + penghitung + ':';
+                        var newInput = document.createElement('input');
+                        newInput.type = 'text';
+                        newInput.className = 'form-control';
+                        newInput.name = 'jenis_pangan[]';
+                        newFormGroup.appendChild(newLabel);
+                        newFormGroup.appendChild(newInput);
+                        inputTable.appendChild(newFormGroup);
+                        penghitung++;
+                    });
+
+                    document.getElementById('undoInput').addEventListener('click', function () {
+                        var inputTable = document.getElementById('inputTable');
+                        if (inputTable.children.length > 1) {
+                            inputTable.removeChild(inputTable.lastChild);
+                            counter--;
+                        }
+                    });
+
+                    document.getElementById('resetInput').addEventListener('click', function () {
+                        var inputTable = document.getElementById('inputTable');
+                        while (inputTable.children.length > 1) {
+                            inputTable.removeChild(inputTable.lastChild);
+                        }
+                        counter = 2;
+                    });
+                </script>
                 <div class="form-group">
-                    <label for="berat">Berat (TON):</label>
+                    <label for="berat">Berat Total (TON):</label>
                     <input type="number" class="form-control" id="berat" name="berat">
                 </div>
                 <div class="form-group">
@@ -77,11 +138,38 @@ $conn->close();
                 <br>
                 <br>
                 <button type="reset" class="btn btn-secondary">Batal</button>
-                <button type="submit" class="btn btn-primary">Kirim</button>
+                <button type="submit" class="btn btn-primary" id="submitBtn" style="display: none;">Kirim</button>
+                <script>
+                    var inputs = document.querySelectorAll('input');
+                    var submitBtn = document.getElementById('submitBtn');
+
+                    function checkInputs() {
+                        for (var i = 0; i < inputs.length; i++) {
+                            if (inputs[i].value === '') {
+                                return false;
+                            }
+                        }
+                        return true;
+                    }
+
+                    for (var i = 0; i < inputs.length; i++) {
+                        inputs[i].addEventListener('input', function () {
+                            if (checkInputs()) {
+                                submitBtn.style.display = 'inline-block';
+                            } else {
+                                submitBtn.style.display = 'none';
+                            }
+                        });
+                    }
+
+                    document.getElementById('formInformasiPangan').addEventListener('submit', function (event) {
+                        if (!checkInputs()) {
+                            event.preventDefault();
+                            alert('Harap isi semua kolom input sebelum mengirim.');
+                        }
+                    });
+                </script>
             </form>
-            <br>
-            <br>
-            <br>
         </div>
         <div class="tab-pane fade" id="informasiPangan" role="tabpanel" aria-labelledby="informasiPangan-tab">
             <!-- Form Informasi Pangan -->
@@ -107,23 +195,29 @@ $conn->close();
     }).addTo(map);
 
     var marker;
-    map.on('click', function(e) {
+    map.on('click', function (e) {
         if (marker) {
             map.removeLayer(marker);
         }
         marker = L.marker(e.latlng).addTo(map);
-        document.getElementById('gps').value = e.latlng.lat + ',' + e.latlng.lng;
+        var gpsInput = document.getElementById('gps');
+        gpsInput.value = e.latlng.lat + ',' + e.latlng.lng;
+        var event = new Event('input');
+        gpsInput.dispatchEvent(event);
     });
 
     L.Control.geocoder({
         defaultMarkGeocode: false,
         geocoder: new L.Control.Geocoder.Nominatim()
-    }).on('markgeocode', function(e) {
+    }).on('markgeocode', function (e) {
         if (marker) {
             map.removeLayer(marker);
         }
         marker = L.marker(e.geocode.center).addTo(map);
         map.setView(e.geocode.center, 13);
-        document.getElementById('gps').value = e.geocode.center.lat + ',' + e.geocode.center.lng;
+        var gpsInput = document.getElementById('gps');
+        gpsInput.value = e.geocode.center.lat + ',' + e.geocode.center.lng;
+        var event = new Event('input');
+        gpsInput.dispatchEvent(event);
     }).addTo(map);
 </script>

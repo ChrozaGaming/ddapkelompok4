@@ -1,4 +1,5 @@
 <?php
+session_start();
 include '../db/configdb.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -12,7 +13,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         VALUES ('$lurah_desa', '$jenis_pangan', '$berat', '$distributor', '$gps')";
 
     if ($conn->query($sql) === TRUE) {
-        echo "Data berhasil disimpan.";
+        $_SESSION['message'] = "Selamat data anda telah kami kirimkan";
+        header("Location: pendataan.php");
+        exit;
     } else {
         echo "Error: " . $sql . "<br>" . $conn->error;
     }
