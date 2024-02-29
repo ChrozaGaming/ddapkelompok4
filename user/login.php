@@ -20,24 +20,40 @@ session_start();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST['email'];
-    $password = $_POST['password']; // Assuming you are using password
+    $password = $_POST['password'];
 
-    // Check if the user is in the userrequests table
-    $sql = "SELECT * FROM userrequests WHERE email = '$email'";
+    // Check if the user is in the users table
+    $sql = "SELECT * FROM users WHERE email = '$email'";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
         $user = $result->fetch_assoc();
         if (password_verify($password, $user['password'])) {
-            // If the user is in the userrequests table and the password is correct, redirect to waitinglist.php
+            // If the user is in the users table and the password is correct, redirect to userdashboard.php
             $_SESSION['email'] = $email;
-            header('Location: waitinglist.php');
+            header('Location: userdashboard.php');
             exit;
         } else {
             echo "Invalid email or password";
         }
     } else {
-        echo "Invalid email or password";
+        // Check if the user is in the userrequests table
+        $sql = "SELECT * FROM userrequests WHERE email = '$email'";
+        $result = $conn->query($sql);
+
+        if ($result->num_rows > 0) {
+            $user = $result->fetch_assoc();
+            if (password_verify($password, $user['password'])) {
+                // If the user is in the userrequests table and the password is correct, redirect to waitinglist.php
+                $_SESSION['email'] = $email;
+                header('Location: waitinglist.php');
+                exit;
+            } else {
+                echo "Invalid email or password";
+            }
+        } else {
+            echo "Invalid email or password";
+        }
     }
 }
 

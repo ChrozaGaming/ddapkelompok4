@@ -4,11 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6f0ad9c7-a09b-431c-bb60-1c58a66c3303" name="Changes" comment="Refactor registration process and add user request handling &#10;&#10;This commit refactors the registration process, moving data into `userrequests` table and directs the user to a `waitinglist` page. Also added is an admin functionality to handle these user requests, generate QR codes, and download license key. These changes provide a better workflow for user management and enhance system security.">
+    <list default="true" id="6f0ad9c7-a09b-431c-bb60-1c58a66c3303" name="Changes" comment="Enforce numeric input for phone number fields&#10;&#10;This commit updates the 'no_hp' field in 'register.php' form for both user and admin, enforcing a pattern that only allows numeric inputs. By using a regular expression pattern, it ensures the phone numbers entered do not contain spaces or other non-numeric characters.">
+      <change afterPath="$PROJECT_DIR$/user/pendataan.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/user/submit_informasi_pangan.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/user/userdashboard.php" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/wilayah_indonesia.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/php.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin/register.php" beforeDir="false" afterPath="$PROJECT_DIR$/admin/register.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/index.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user/login.php" beforeDir="false" afterPath="$PROJECT_DIR$/user/login.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/user/register.php" beforeDir="false" afterPath="$PROJECT_DIR$/user/register.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -154,7 +157,8 @@
       <workItem from="1709017764457" duration="3618000" />
       <workItem from="1709021879790" duration="280000" />
       <workItem from="1709039837659" duration="15423000" />
-      <workItem from="1709092688221" duration="1801000" />
+      <workItem from="1709092688221" duration="2651000" />
+      <workItem from="1709185811674" duration="7541000" />
     </task>
     <task id="LOCAL-00001" summary="first initialization">
       <option name="closed" value="true" />
@@ -196,7 +200,15 @@
       <option name="project" value="LOCAL" />
       <updated>1709059939840</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Enforce numeric input for phone number fields&#10;&#10;This commit updates the 'no_hp' field in 'register.php' form for both user and admin, enforcing a pattern that only allows numeric inputs. By using a regular expression pattern, it ensures the phone numbers entered do not contain spaces or other non-numeric characters.">
+      <option name="closed" value="true" />
+      <created>1709096450758</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1709096450758</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -249,7 +261,8 @@
     <MESSAGE value="Improve user registration and project organization&#10;&#10;This update regroups files for better structure, optimizes workspace settings, and improves user registration functionalities. PHP files in the 'user' directory were thoroughly revised, especially 'register.php', to enhance user registration process. The 'apiwilayah.ts' file is deleted and 'register.ts' is relocated, reflecting an effort for better project organization. Unexpected inputs check is also implemented, ensuring email address validity during registration." />
     <MESSAGE value="Initialize admin functionalities and refactor user registration&#10;&#10;This commit introduces various admin functionalities like login, logout, dashboard, and registration. In addition, the user registration process is improved by using a database configuration file and updating the registration form title. This commit also establishes basic TypeScript-based checks for form fields in the registration process." />
     <MESSAGE value="Refactor registration process and add user request handling &#10;&#10;This commit refactors the registration process, moving data into `userrequests` table and directs the user to a `waitinglist` page. Also added is an admin functionality to handle these user requests, generate QR codes, and download license key. These changes provide a better workflow for user management and enhance system security." />
-    <option name="LAST_COMMIT_MESSAGE" value="Refactor registration process and add user request handling &#10;&#10;This commit refactors the registration process, moving data into `userrequests` table and directs the user to a `waitinglist` page. Also added is an admin functionality to handle these user requests, generate QR codes, and download license key. These changes provide a better workflow for user management and enhance system security." />
+    <MESSAGE value="Enforce numeric input for phone number fields&#10;&#10;This commit updates the 'no_hp' field in 'register.php' form for both user and admin, enforcing a pattern that only allows numeric inputs. By using a regular expression pattern, it ensures the phone numbers entered do not contain spaces or other non-numeric characters." />
+    <option name="LAST_COMMIT_MESSAGE" value="Enforce numeric input for phone number fields&#10;&#10;This commit updates the 'no_hp' field in 'register.php' form for both user and admin, enforcing a pattern that only allows numeric inputs. By using a regular expression pattern, it ensures the phone numbers entered do not contain spaces or other non-numeric characters." />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
