@@ -22,7 +22,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 echo "Password Salah";
             }
         } else {
-            echo "Email belum terdaftar";
+            echo "Email belum terdaftar atau Ditolak oleh Admin";
         }
     }
 }

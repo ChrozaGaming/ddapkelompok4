@@ -2,7 +2,7 @@
 session_start();
 include '../db/configdb.php';
 
-if (!isset($_SESSION['loggedin'])) {
+if (!isset($_SESSION['email'])) {
     header("Location: login.php");
     exit;
 }

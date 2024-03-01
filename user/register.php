@@ -81,10 +81,6 @@ $conn->close();
         <label for="password">Password:</label>
         <input type="password" class="form-control" id="password" name="password">
     </div>
-    <div class="form-group">
-        <label for="license_key">License Key:</label>
-        <input type="text" class="form-control" id="license_key" name="license_key">
-    </div>
     <button type="submit" class="btn btn-primary">Submit</button>
 </form>
 </body>

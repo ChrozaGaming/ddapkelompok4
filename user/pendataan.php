@@ -91,43 +91,6 @@ if (isset($_SESSION['message'])) {
                 <button type="button" id="undoInput" class="btn btn-secondary">Hapus</button>
                 <button type="button" id="resetInput" class="btn btn-secondary">Reset</button>
 
-                <script>
-                    var penghitung = 2;
-                    document.getElementById('tambahInput').addEventListener('click', function () {
-                        var inputTable = document.getElementById('inputTable');
-                        var newFormGroup = document.createElement('div');
-                        newFormGroup.className = 'form-group';
-                        var newLabel = document.createElement('label');
-                        newLabel.textContent = 'Jenis Pangan ' + penghitung + ':';
-                        var newInput = document.createElement('input');
-                        newInput.type = 'text';
-                        newInput.className = 'form-control';
-                        newInput.name = 'jenis_pangan[]';
-                        newFormGroup.appendChild(newLabel);
-                        newFormGroup.appendChild(newInput);
-                        inputTable.appendChild(newFormGroup);
-                        penghitung++;
-                    });
-
-                    document.getElementById('undoInput').addEventListener('click', function () {
-                        var inputTable = document.getElementById('inputTable');
-                        if (inputTable.children.length > 1) {
-                            inputTable.removeChild(inputTable.lastChild);
-                            counter--;
-                        }
-                    });
-
-                    document.getElementById('resetInput').addEventListener('click', function () {
-                        var confirmation = confirm("Apakah anda yakin untuk mereset row yang sudah anda buat?");
-                        if (confirmation) {
-                            var inputTable = document.getElementById('inputTable');
-                            while (inputTable.children.length > 1) {
-                                inputTable.removeChild(inputTable.lastChild);
-                            }
-                            penghitung = 2;
-                        }
-                    });
-                </script>
                 <div class="form-group">
                     <label for="berat">Berat Total (TON):</label>
                     <input type="number" class="form-control" id="berat" name="berat">
@@ -140,54 +103,91 @@ if (isset($_SESSION['message'])) {
                     <label for="gps">Set GPS/Lokasi:</label>
                     <input type="text" class="form-control" id="gps" name="gps" readonly>
                 </div>
-                <div id="mapid" style="height: 500px;"></div>
+                <div id="mapid1" style="height: 500px;"></div>
                 <br>
                 <br>
                 <br>
                 <button type="reset" class="btn btn-secondary">Batal</button>
                 <button type="submit" class="btn btn-primary" id="submitBtn" style="display: none;">Kirim</button>
-                <script>
-                    var inputs = document.querySelectorAll('input');
-                    var submitBtn = document.getElementById('submitBtn');
+            </form>
+            <script>
+                var penghitung = 2;
+                document.getElementById('tambahInput').addEventListener('click', function () {
+                    var inputTable = document.getElementById('inputTable');
+                    var newFormGroup = document.createElement('div');
+                    newFormGroup.className = 'form-group';
+                    var newLabel = document.createElement('label');
+                    newLabel.textContent = 'Jenis Pangan ' + penghitung + ':';
+                    var newInput = document.createElement('input');
+                    newInput.type = 'text';
+                    newInput.className = 'form-control';
+                    newInput.name = 'jenis_pangan[]';
+                    newFormGroup.appendChild(newLabel);
+                    newFormGroup.appendChild(newInput);
+                    inputTable.appendChild(newFormGroup);
+                    penghitung++;
+                });
 
-                    function checkInputs() {
-                        for (var i = 0; i < inputs.length; i++) {
-                            if (inputs[i].value === '') {
-                                return false;
-                            }
+                document.getElementById('undoInput').addEventListener('click', function () {
+                    var inputTable = document.getElementById('inputTable');
+                    if (inputTable.children.length > 1) {
+                        inputTable.removeChild(inputTable.lastChild);
+                        counter--;
+                    }
+                });
+
+                document.getElementById('resetInput').addEventListener('click', function () {
+                    var confirmation = confirm("Apakah anda yakin untuk mereset row yang sudah anda buat?");
+                    if (confirmation) {
+                        var inputTable = document.getElementById('inputTable');
+                        while (inputTable.children.length > 1) {
+                            inputTable.removeChild(inputTable.lastChild);
                         }
-                        return true;
+                        penghitung = 2;
                     }
+                });
 
+                var inputs = document.querySelectorAll('input');
+                var submitBtn = document.getElementById('submitBtn');
+
+                function checkInputs() {
                     for (var i = 0; i < inputs.length; i++) {
-                        inputs[i].addEventListener('input', function () {
-                            if (checkInputs()) {
-                                submitBtn.style.display = 'inline-block';
-                            } else {
-                                submitBtn.style.display = 'none';
-                            }
-                        });
+                        if (inputs[i].value === '') {
+                            return false;
+                        }
                     }
+                    return true;
+                }
 
-                    document.getElementById('formInformasiPangan').addEventListener('submit', function (event) {
-                        if (!checkInputs()) {
-                            event.preventDefault();
-                            alert('Harap isi semua kolom input sebelum mengirim.');
+                for (var i = 0; i < inputs.length; i++) {
+                    inputs[i].addEventListener('input', function () {
+                        if (checkInputs()) {
+                            submitBtn.style.display = 'inline-block';
+                        } else {
+                            submitBtn.style.display = 'none';
                         }
                     });
-                </script>
-            </form>
+                }
+
+                document.getElementById('formInformasiPangan').addEventListener('submit', function (event) {
+                    if (!checkInputs()) {
+                        event.preventDefault();
+                        alert('Harap isi semua kolom input sebelum mengirim.');
+                    }
+                });
+            </script>
         </div>
         <div class="tab-pane fade" id="informasiPangan" role="tabpanel" aria-labelledby="informasiPangan-tab">
             <!-- Form Informasi Pangan -->
             <form id="formInformasiPangan">
-                <!-- Isi form informasi pangan di sini -->
+                <!-- ... rest of the form ... -->
+                <div id="mapid2" style="height: 500px;"></div>
             </form>
         </div>
         <div class="tab-pane fade" id="pendistribusian" role="tabpanel" aria-labelledby="pendistribusian-tab">
             <!-- Form Pendistribusian -->
             <form id="formPendistribusian">
-                <!-- Isi form pendistribusian di sini -->
+                <!-- ... rest of the form ... -->
             </form>
         </div>
     </div>
@@ -196,35 +196,71 @@ if (isset($_SESSION['message'])) {
 </html>
 
 <script>
-    var map = L.map('mapid').setView([-34.397, 150.644], 13);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-    }).addTo(map);
-
-    var marker;
-    map.on('click', function (e) {
-        if (marker) {
-            map.removeLayer(marker);
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+        // Check which tab was shown
+        var mapId;
+        if (e.target.hash == '#pengajuan') {
+            mapId = 'mapid1';
+        } else if (e.target.hash == '#informasiPangan') {
+            mapId = 'mapid2';
+        } else {
+            // If the shown tab is not one of the above, do nothing
+            return;
         }
-        marker = L.marker(e.latlng).addTo(map);
-        var gpsInput = document.getElementById('gps');
-        gpsInput.value = e.latlng.lat + ',' + e.latlng.lng;
-        var event = new Event('input');
-        gpsInput.dispatchEvent(event);
+
+        // Initialize the map
+        var map = L.map(mapId).setView([-34.397, 150.644], 13);
+
+        // Add the tile layer to the map
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+        }).addTo(map);
+
+        // Initialize a variable to hold the marker
+        var marker;
+
+        // Add a click event to the map
+        map.on('click', function (e) {
+            // If a marker already exists, remove it
+            if (marker) {
+                map.removeLayer(marker);
+            }
+
+            // Add a new marker at the clicked location
+            marker = L.marker(e.latlng).addTo(map);
+
+            // Update the GPS input with the clicked location
+            var gpsInput = document.getElementById('gps');
+            gpsInput.value = e.latlng.lat + ',' + e.latlng.lng;
+
+            // Dispatch an input event to the GPS input
+            var event = new Event('input');
+            gpsInput.dispatchEvent(event);
+        });
+
+        // Add a geocoder control to the map
+        L.Control.geocoder({
+            defaultMarkGeocode: false,
+            geocoder: new L.Control.Geocoder.Nominatim()
+        }).on('markgeocode', function (e) {
+            // If a marker already exists, remove it
+            if (marker) {
+                map.removeLayer(marker);
+            }
+
+            // Add a new marker at the geocoded location
+            marker = L.marker(e.geocode.center).addTo(map);
+
+            // Center the map on the geocoded location
+            map.setView(e.geocode.center, 13);
+
+            // Update the GPS input with the geocoded location
+            var gpsInput = document.getElementById('gps');
+            gpsInput.value = e.geocode.center.lat + ',' + e.geocode.center.lng;
+
+            // Dispatch an input event to the GPS input
+            var event = new Event('input');
+            gpsInput.dispatchEvent(event);
+        }).addTo(map);
     });
-
-    L.Control.geocoder({
-        defaultMarkGeocode: false,
-        geocoder: new L.Control.Geocoder.Nominatim()
-    }).on('markgeocode', function (e) {
-        if (marker) {
-            map.removeLayer(marker);
-        }
-        marker = L.marker(e.geocode.center).addTo(map);
-        map.setView(e.geocode.center, 13);
-        var gpsInput = document.getElementById('gps');
-        gpsInput.value = e.geocode.center.lat + ',' + e.geocode.center.lng;
-        var event = new Event('input');
-        gpsInput.dispatchEvent(event);
-    }).addTo(map);
 </script>
