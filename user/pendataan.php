@@ -26,8 +26,8 @@ if (isset($_SESSION['message'])) {
                aria-controls="pendataan" aria-selected="true">Pendataan</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" id="informasiPangan-tab" data-toggle="tab" href="#informasiPangan" role="tab"
-               aria-controls="informasiPangan" aria-selected="false">Informasi Pangan</a>
+            <a class="nav-link" id="pendataan-tab2" data-toggle="tab" href="#pendataan2" role="tab"
+               aria-controls="pendataan2" aria-selected="false">Pengajuan</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" id="pendistribusian-tab" data-toggle="tab" href="#pendistribusian" role="tab"
@@ -77,8 +77,9 @@ if (isset($_SESSION['message'])) {
                     <div class="form-group">
                         <label for="jenis_pangan1">Jenis Pangan 1:</label>
                         <input type="text" class="form-control" id="jenis_pangan1" name="jenis_pangan[]">
-<!--                        <label for="berat_pangan1">Berat per KG:</label>-->
-                        <input type="number" class="form-control" id="berat_pangan1" name="berat_pangan[]" placeholder="Berat per (TON)">
+                        <!--                        <label for="berat_pangan1">Berat per KG:</label>-->
+                        <input type="number" class="form-control" id="berat_pangan1" name="berat_pangan[]"
+                               placeholder="Berat per (TON)">
                     </div>
                 </div>
                 <button type="button" id="tambahInput" class="btn btn-secondary">Tambah</button>
@@ -202,23 +203,130 @@ if (isset($_SESSION['message'])) {
                     });
                 }
 
-                document.getElementById('formPendataan').addEventListener('submit', function (event) {
-                    if (!checkInputs()) {
-                        event.preventDefault();
-                        alert('Harap isi semua kolom input sebelum mengirim.');
-                    }
-                });
+                // document.getElementById('formPendataan').addEventListener('submit', function (event) {
+                //     if (!checkInputs()) {
+                //         event.preventDefault();
+                //         alert('Harap isi semua kolom input sebelum mengirim.');
+                //     }
+                // });
 
             </script>
         </div>
-        <div class="tab-pane fade" id="informasiPangan" role="tabpanel" aria-labelledby="informasiPangan-tab">
-            <!-- Form Informasi Pangan -->
-            <form id="formInformasiPangan" method="post" action="">
-                <!-- Your form fields go here -->
+        <div class="tab-pane fade" id="pendataan2" role="tabpanel" aria-labelledby="pendataan-tab2">
+            <form id="formPendataan2" method="post" action="formpendataan2.php">
+                <div class="form-group">
+                    <label for="lurah_desa2">Lurah/Desa:</label>
+                    <input type="text" class="form-control" id="lurah_desa2" name="lurah_desa2">
+                </div>
 
-                <!-- Map container -->
-                <div id="mapid1_pangan" style="height: 500px;"></div>
+                <style>
+                    #inputTable2 {
+                        display: flex;
+                        flex-wrap: wrap;
+                        justify-content: start;
+                        flex-direction: row; /* Baris baru */
+                    }
+
+                    .form-group {
+                        display: flex;
+                        flex-direction: column;
+                        align-items: start;
+                    }
+
+                    #berat_pangan2 {
+                        padding: 10px;
+                        margin-top: 8px;
+                        bottom: 30%;
+                    }
+
+                    .form-control {
+                        width: 100%;
+                    }
+
+                    input::placeholder {
+                        color: rgba(0, 0, 0, 0.5); /* Change opacity here */
+                    }
+
+                </style>
+
+                <div id="inputTable2">
+                    <div class="form-group">
+                        <label for="jenis_pangan2">Jenis Pangan 1:</label>
+                        <input type="text" class="form-control" id="jenis_pangan2" name="jenis_pangan2[]">
+                        <input type="number" class="form-control" id="berat_pangan2" name="berat_pangan2[]" placeholder="Berat per (TON)">
+                    </div>
+                </div>
+                <button type="button" id="tambahInput2" class="btn btn-secondary">Tambah</button>
+                <button type="button" id="undoInput2" class="btn btn-secondary">Hapus</button>
+                <button type="button" id="resetInput2" class="btn btn-secondary">Reset</button>
+
+                <div class="form-group">
+                    <label for="berat2">Berat Total (TON):</label>
+                    <input type="number" class="form-control" id="berat2" name="berat2" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="distributor2">Distributor:</label>
+                    <input type="text" class="form-control" id="distributor2" name="distributor2">
+                </div>
+                <div class="form-group">
+                    <label for="gps2">Set GPS/Lokasi:</label>
+                    <input type="text" class="form-control" id="gps2" name="gps2" readonly>
+                </div>
+                <div id="mapid2" style="height: 500px;"></div>
+                <br>
+                <br>
+                <br>
+                <div id="error-message" style="color: red;"></div>
+                <button type="reset" class="btn btn-secondary">Batal</button>
+                <button type="submit" class="btn btn-primary" id="submitBtn2" style="display: none;">Kirim</button>
             </form>
+            <script>
+                function updateTotalBerat2() {
+                    var beratPanganInputs = document.querySelectorAll('input[name="berat_pangan2[]"]');
+                    var totalBerat = 0;
+                    for (var i = 0; i < beratPanganInputs.length; i++) {
+                        totalBerat += Number(beratPanganInputs[i].value);
+                    }
+                    document.getElementById('berat2').value = totalBerat;
+                }
+
+                document.getElementById('berat_pangan2').addEventListener('input', updateTotalBerat2);
+
+                var penghitung2 = 2;
+
+                document.getElementById('tambahInput2').addEventListener('click', function () {
+                    // Your code here
+                });
+
+                document.getElementById('undoInput2').addEventListener('click', function () {
+                    // Your code here
+                });
+
+                document.getElementById('resetInput2').addEventListener('click', function () {
+                    // Your code here
+                });
+
+                var inputs2 = Array.from(document.querySelectorAll('#formPendataan2 input'));
+                var submitBtn2 = document.getElementById('submitBtn2');
+
+                function checkInputs2() {
+                    var allFilled = inputs2.every(function(input) {
+                        return input.value !== '';
+                    });
+                    submitBtn2.style.display = allFilled ? 'inline-block' : 'none';
+                }
+
+                inputs2.forEach(function(input) {
+                    input.addEventListener('input', checkInputs2);
+                });
+
+                // document.getElementById('formPendataan2').addEventListener('submit', function (event) {
+                //     if (!checkInputs2()) {
+                //         event.preventDefault();
+                //         document.getElementById('error-message').textContent = 'Harap isi semua kolom input sebelum mengirim.';
+                //     }
+                // });
+            </script>
         </div>
         <div class="tab-pane fade" id="pendistribusian" role="tabpanel" aria-labelledby="pendistribusian-tab">
             <!-- Your content for this tab goes here -->
@@ -274,49 +382,51 @@ if (isset($_SESSION['message'])) {
     map1.invalidateSize();
 
     $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-        if (e.target.hash == '#informasiPangan') {
-            var map2 = L.map('mapid1_pangan').setView([-34.397, 150.644], 13);
+        if (e.target.hash == '#pendataan2') {
+            setTimeout(function () {
+                var map2 = L.map('mapid2').setView([-34.397, 150.644], 13);
 
-            // Add the tile layer to the map
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                maxZoom: 19,
-            }).addTo(map2);
+                // Add the tile layer to the map
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19,
+                }).addTo(map2);
 
-            // Initialize a variable to hold the marker
-            var marker2;
+                // Initialize a variable to hold the marker
+                var marker2;
 
-            // Add a click event to the map
-            map2.on('click', function (e) {
-                // If a marker already exists, remove it
-                if (marker2) {
-                    map2.removeLayer(marker2);
-                }
+                // Add a click event to the map
+                map2.on('click', function (e) {
+                    // If a marker already exists, remove it
+                    if (marker2) {
+                        map2.removeLayer(marker2);
+                    }
 
-                // Add a new marker at the clicked location
-                marker2 = L.marker(e.latlng).addTo(map2);
+                    // Add a new marker at the clicked location
+                    marker2 = L.marker(e.latlng).addTo(map2);
 
-                // Update the GPS input with the clicked location
-                var gpsInput = document.getElementById('gps_pangan');
-                gpsInput.value = e.latlng.lat + ',' + e.latlng.lng;
+                    // Update the GPS input with the clicked location
+                    var gpsInput = document.getElementById('gps2');
+                    gpsInput.value = e.latlng.lat + ',' + e.latlng.lng;
 
-                // Dispatch an input event to the GPS input
-                var event = new Event('input');
-                gpsInput.dispatchEvent(event);
-            });
+                    // Dispatch an input event to the GPS input
+                    var event = new Event('input');
+                    gpsInput.dispatchEvent(event);
+                });
 
-            // Add geocoder control to the map without adding a marker
-            var geocoder2 = L.Control.geocoder({
-                geocodeMarker: false,
-                defaultMarkGeocode: false
-            }).addTo(map2);
+                // Add geocoder control to the map without adding a marker
+                var geocoder2 = L.Control.geocoder({
+                    geocodeMarker: false,
+                    defaultMarkGeocode: false
+                }).addTo(map2);
 
-            geocoder2.on('markgeocode', function (e) {
-                // Set the map view to the result location without adding a marker
-                map2.setView(e.geocode.center);
-            });
+                geocoder2.on('markgeocode', function (e) {
+                    // Set the map view to the result location without adding a marker
+                    map2.setView(e.geocode.center);
+                });
 
-            // Ensure the map is fully visible
-            map2.invalidateSize();
+                // Ensure the map is fully visible
+                map2.invalidateSize();
+            }, 500); // Delay for 500 milliseconds
         }
     });
 </script>
