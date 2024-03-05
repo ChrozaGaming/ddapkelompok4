@@ -4,15 +4,31 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6f0ad9c7-a09b-431c-bb60-1c58a66c3303" name="Changes" comment="Add redirect and confirmation functionality to pendataan.php&#10;&#10;This update modifies pendataan.php to redirect users to the same page upon encountering an error, improving error handling. It also adds a confirmation prompt before resetting form inputs, enhancing user interaction and preventing unintended data loss.">
-      <change afterPath="$PROJECT_DIR$/user/logout.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/user/pengajuaninformasipangan.php" afterDir="false" />
+    <list default="true" id="6f0ad9c7-a09b-431c-bb60-1c58a66c3303" name="Changes" comment="Refactored login form and added CSS styling&#10;&#10;Redesigned login form layout in 'user/login.php', moving from a basic design to a more sophisticated interface using Bootstrap CSS. Custom CSS for style improvements were also added for enhanced user experience.">
+      <change afterPath="$PROJECT_DIR$/user/location_input.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/user/update_location.php" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/wilayah_indonesia.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/discord.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/discord.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/admin/admindashboard.php" beforeDir="false" afterPath="$PROJECT_DIR$/admin/admindashboard.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/admin/confirm_licensekey.php" beforeDir="false" afterPath="$PROJECT_DIR$/admin/confirm_licensekey.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/admin/data_gizi.php" beforeDir="false" afterPath="$PROJECT_DIR$/admin/data_gizi.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/admin/displayqrcode.php" beforeDir="false" afterPath="$PROJECT_DIR$/admin/displayqrcode.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/admin/generateqrcode.php" beforeDir="false" afterPath="$PROJECT_DIR$/admin/generateqrcode.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/admin/login.php" beforeDir="false" afterPath="$PROJECT_DIR$/admin/login.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/admin/logout.php" beforeDir="false" afterPath="$PROJECT_DIR$/admin/logout.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/admin/userrequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/admin/userrequest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/index.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user/check_license.php" beforeDir="false" afterPath="$PROJECT_DIR$/user/check_license.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user/formpendataan.php" beforeDir="false" afterPath="$PROJECT_DIR$/user/formpendataan.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/user/login.php" beforeDir="false" afterPath="$PROJECT_DIR$/user/login.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user/logout.php" beforeDir="false" afterPath="$PROJECT_DIR$/user/logout.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/user/pendataan.php" beforeDir="false" afterPath="$PROJECT_DIR$/user/pendataan.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user/pengajuaninformasipangan.php" beforeDir="false" afterPath="$PROJECT_DIR$/user/pengajuaninformasipangan.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/user/register.php" beforeDir="false" afterPath="$PROJECT_DIR$/user/register.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user/registeruser.php" beforeDir="false" afterPath="$PROJECT_DIR$/user/registeruser.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user/tambah_pangan.php" beforeDir="false" afterPath="$PROJECT_DIR$/user/tambah_pangan.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user/userdashboard.php" beforeDir="false" afterPath="$PROJECT_DIR$/user/userdashboard.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -99,36 +115,38 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "PHPUnit.ddapkelompok4.executor": "Run",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "main",
-    "last_opened_file_path": "C:/wamp64/www/ddapkelompok4/user",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
-    "ts.external.directory.path": "C:\\Users\\hilmy\\AppData\\Local\\Programs\\PhpStorm\\plugins\\javascript-impl\\jsLanguageServicesImpl\\external",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;PHPUnit.ddapkelompok4.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/xampp/htdocs/ddapkelompok4&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;C:\\Users\\hilmy\\AppData\\Local\\Programs\\PhpStorm\\plugins\\javascript-impl\\jsLanguageServicesImpl\\external&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "DatabaseDriversLRU": [
-      "mysql"
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;mysql&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\wamp64\www\ddapkelompok4\user" />
       <recent name="C:\wamp64\www\ddapkelompok4\assets\css\admin" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\wamp64\www\ddapkelompok4\admin" />
+      <recent name="C:\wamp64\www\ddapkelompok4\assets\js" />
+      <recent name="C:\wamp64\www\ddapkelompok4\assets\ts\user" />
       <recent name="C:\wamp64\www\ddapkelompok4\assets\ts" />
+      <recent name="C:\wamp64\www\ddapkelompok4\admin" />
     </key>
   </component>
   <component name="SharedIndexes">
@@ -163,6 +181,12 @@
       <workItem from="1709222950889" duration="4103000" />
       <workItem from="1709259014027" duration="2155000" />
       <workItem from="1709273884492" duration="272000" />
+      <workItem from="1709274207265" duration="10978000" />
+      <workItem from="1709293037357" duration="84000" />
+      <workItem from="1709293218861" duration="5439000" />
+      <workItem from="1709474895231" duration="2934000" />
+      <workItem from="1709479127432" duration="7333000" />
+      <workItem from="1709615532548" duration="5679000" />
     </task>
     <task id="LOCAL-00001" summary="first initialization">
       <option name="closed" value="true" />
@@ -236,7 +260,39 @@
       <option name="project" value="LOCAL" />
       <updated>1709202537754</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="Update User Registration, create Logout and User food submission pages&#10;&#10;This commit contains several changes mainly about creating new functionalities and improving user interfaces. User Registration page is updated by removing License Key input. Two new pages are added &quot;Logout&quot; and &quot;User food submission&quot;. GUI changes are made in &quot;user/pendataan.php&quot; to enhance user interaction. Error messaging is also improved in &quot;admin/login.php&quot;.">
+      <option name="closed" value="true" />
+      <created>1709274901213</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1709274901213</updated>
+    </task>
+    <task id="LOCAL-00011" summary="Refactor and improve user data entry process&#10;&#10;Implemented significant changes to enhance and simplify the user data entry workflow. The previous data handling code from `pendataan.php` has been divided into `formpendataan.php` and `formpengajuan.php` for better organization and separation of concerns. Additionally, various interface adjustments were made to improve user interaction, such as updating map behaviors and adjusting form layouts.">
+      <option name="closed" value="true" />
+      <created>1709287399144</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1709287399144</updated>
+    </task>
+    <task id="LOCAL-00012" summary="Removed 'formpengajuan.php' and refactored user data entry forms&#10;&#10;Deleted 'formpengajuan.php' and refactored code related to user data entry forms. Split the existing data handling logic into separate PHP scripts for better code management. Made improvements to form UI and enhanced map behaviors to improve user experience.">
+      <option name="closed" value="true" />
+      <created>1709477775441</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1709477775441</updated>
+    </task>
+    <task id="LOCAL-00013" summary="Refactored login form and added CSS styling&#10;&#10;Redesigned login form layout in 'user/login.php', moving from a basic design to a more sophisticated interface using Bootstrap CSS. Custom CSS for style improvements were also added for enhanced user experience.">
+      <option name="closed" value="true" />
+      <created>1709479386524</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1709479386524</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -294,7 +350,11 @@
     <MESSAGE value="Implement interactive UI and error-handling in pendataan.php&#10;&#10;This commit introduces a more interactive user interface in pendataan.php by handling 'jenis_pangan' as an array and improving form validation. It also introduces session-based alert messages for data submission success or failure, improving user feedback." />
     <MESSAGE value="Improve UI and error handling functionalities in pendataan.php&#10;&#10;This commit introduces a confirmation message before resetting the input form, thereby enhancing user interaction. Additionally, it redirects the user back to the pendataan.php page after an error occurs, a feature that improves error handling and maintains a consistent user experience." />
     <MESSAGE value="Add redirect and confirmation functionality to pendataan.php&#10;&#10;This update modifies pendataan.php to redirect users to the same page upon encountering an error, improving error handling. It also adds a confirmation prompt before resetting form inputs, enhancing user interaction and preventing unintended data loss." />
-    <option name="LAST_COMMIT_MESSAGE" value="Add redirect and confirmation functionality to pendataan.php&#10;&#10;This update modifies pendataan.php to redirect users to the same page upon encountering an error, improving error handling. It also adds a confirmation prompt before resetting form inputs, enhancing user interaction and preventing unintended data loss." />
+    <MESSAGE value="Update User Registration, create Logout and User food submission pages&#10;&#10;This commit contains several changes mainly about creating new functionalities and improving user interfaces. User Registration page is updated by removing License Key input. Two new pages are added &quot;Logout&quot; and &quot;User food submission&quot;. GUI changes are made in &quot;user/pendataan.php&quot; to enhance user interaction. Error messaging is also improved in &quot;admin/login.php&quot;." />
+    <MESSAGE value="Refactor and improve user data entry process&#10;&#10;Implemented significant changes to enhance and simplify the user data entry workflow. The previous data handling code from `pendataan.php` has been divided into `formpendataan.php` and `formpengajuan.php` for better organization and separation of concerns. Additionally, various interface adjustments were made to improve user interaction, such as updating map behaviors and adjusting form layouts." />
+    <MESSAGE value="Removed 'formpengajuan.php' and refactored user data entry forms&#10;&#10;Deleted 'formpengajuan.php' and refactored code related to user data entry forms. Split the existing data handling logic into separate PHP scripts for better code management. Made improvements to form UI and enhanced map behaviors to improve user experience." />
+    <MESSAGE value="Refactored login form and added CSS styling&#10;&#10;Redesigned login form layout in 'user/login.php', moving from a basic design to a more sophisticated interface using Bootstrap CSS. Custom CSS for style improvements were also added for enhanced user experience." />
+    <option name="LAST_COMMIT_MESSAGE" value="Refactored login form and added CSS styling&#10;&#10;Redesigned login form layout in 'user/login.php', moving from a basic design to a more sophisticated interface using Bootstrap CSS. Custom CSS for style improvements were also added for enhanced user experience." />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

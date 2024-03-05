@@ -11,11 +11,11 @@
             $email = $_GET['email'];
             echo "<p>Apakah Anda yakin ingin melanjutkan ke tahap proses pembuatan license key untuk email " . $email . "?</p>";
             echo "<div class='d-flex justify-content-center'>";
-            echo "<form method='post' action='generateqrcode.php' class='mr-2'>";
+            echo "<form method='post' action='generateqrcode' class='mr-2'>";
             echo "<input type='hidden' name='email' value='" . $email . "'>";
             echo "<input type='submit' name='action' value='Setuju' class='btn btn-primary'>";
             echo "</form>";
-            echo "<form method='post' action='userrequest.php'>";
+            echo "<form method='post' action='userrequest'>";
             echo "<input type='submit' name='action' value='Tidak Setuju' class='btn btn-danger'>";
             echo "</form>";
             echo "</div>";

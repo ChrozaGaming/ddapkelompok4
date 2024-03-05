@@ -8,7 +8,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
-        header('Location: userdashboard.php');
+        header('Location: userdashboard');
     } else {
         echo "Invalid license key";
     }

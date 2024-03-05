@@ -20,7 +20,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Redirect ke halaman yang sama
-    header("Location: pendataan.php");
+    header("Location: pendataan");
     exit;
 }
 

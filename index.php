@@ -53,7 +53,7 @@
                 <a class="nav-link" href="#">Contact</a>
             </li>
         </ul>
-        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Masuk</button>
+        <a href="user/login" class="btn btn-outline-success my-2 my-sm-0">Masuk</a>
     </div>
 </nav>
 </body>

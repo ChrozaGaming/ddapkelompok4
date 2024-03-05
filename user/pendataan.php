@@ -17,6 +17,7 @@ if (isset($_SESSION['message'])) {
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css"/>
     <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBcqpq8QdjwYc2tnglKoyvpvdZAmEjSxKM&libraries=places"></script>
 </head>
 <body>
 <div class="container mt-5">
@@ -37,11 +38,59 @@ if (isset($_SESSION['message'])) {
     <div class="tab-content" id="myTabContent">
         <div class="tab-pane fade show active" id="pendataan" role="tabpanel" aria-labelledby="pendataan-tab">
             <!-- Form Pengajuan -->
-            <form id="formPendataan" method="post" action="formpendataan.php">
+            <form id="formPendataan" method="post" action="formpendataan">
                 <div class="form-group">
-                    <label for="lurah_desa">Lurah/Desa:</label>
+                    <label for="lurah_desa">Lurah/Desa: </label>
+                    <span style="user-select: none;">Balai Desa </span>
                     <input type="text" class="form-control" id="lurah_desa" name="lurah_desa">
                 </div>
+
+                <script>
+                    var input = document.getElementById('lurah_desa');
+                    var autocomplete = new google.maps.places.Autocomplete(input);
+
+                    var previousValue = input.value;
+
+                    input.addEventListener('focus', function () {
+                        if (!this.value.startsWith('Balai Desa ')) {
+                            this.value = 'Balai Desa ' + this.value;
+                        }
+                        previousValue = this.value;
+                    });
+
+                    input.addEventListener('click', function () {
+                        if (window.getSelection().toString().startsWith('Balai Desa ')) {
+                            this.setSelectionRange('Balai Desa '.length, this.value.length);
+                        }
+                    });
+
+                    input.addEventListener('input', function () {
+                        if (!this.value.startsWith('Balai Desa ')) {
+                            this.value = 'Balai Desa ' + this.value;
+                        }
+                    });
+
+                    input.addEventListener('keydown', function (e) {
+                        var selectionStart = this.selectionStart;
+                        if (selectionStart < 'Balai Desa '.length) {
+                            e.preventDefault();
+                        }
+                    });
+
+                    autocomplete.addListener('place_changed', function () {
+                        var place = autocomplete.getPlace();
+                        if (!place.geometry) {
+                            window.alert("No details available for input: '" + place.name + "'");
+                            return;
+                        }
+
+                        // Cek apakah hasil adalah desa
+                        if (place.types.includes('sublocality_level_1')) {
+                            console.log("Balai Desa " + place.name);
+                        } else {
+                        }
+                    });
+                </script>
 
                 <style>
                     #inputTable {
@@ -213,7 +262,7 @@ if (isset($_SESSION['message'])) {
             </script>
         </div>
         <div class="tab-pane fade" id="pendataan2" role="tabpanel" aria-labelledby="pendataan-tab2">
-            <form id="formPendataan2" method="post" action="formpendataan2.php">
+            <form id="formPendataan2" method="post" action="formpendataan2">
                 <div class="form-group">
                     <label for="lurah_desa2">Lurah/Desa:</label>
                     <input type="text" class="form-control" id="lurah_desa2" name="lurah_desa2">
@@ -253,7 +302,8 @@ if (isset($_SESSION['message'])) {
                     <div class="form-group">
                         <label for="jenis_pangan2">Jenis Pangan 1:</label>
                         <input type="text" class="form-control" id="jenis_pangan2" name="jenis_pangan2[]">
-                        <input type="number" class="form-control" id="berat_pangan2" name="berat_pangan2[]" placeholder="Berat per (TON)">
+                        <input type="number" class="form-control" id="berat_pangan2" name="berat_pangan2[]"
+                               placeholder="Berat per (TON)">
                     </div>
                 </div>
                 <button type="button" id="tambahInput2" class="btn btn-secondary">Tambah</button>
@@ -310,13 +360,13 @@ if (isset($_SESSION['message'])) {
                 var submitBtn2 = document.getElementById('submitBtn2');
 
                 function checkInputs2() {
-                    var allFilled = inputs2.every(function(input) {
+                    var allFilled = inputs2.every(function (input) {
                         return input.value !== '';
                     });
                     submitBtn2.style.display = allFilled ? 'inline-block' : 'none';
                 }
 
-                inputs2.forEach(function(input) {
+                inputs2.forEach(function (input) {
                     input.addEventListener('input', checkInputs2);
                 });
 

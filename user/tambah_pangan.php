@@ -14,7 +14,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($conn->query($sql) === TRUE) {
         $_SESSION['message'] = "Selamat data anda telah kami kirimkan";
-        header("Location: pendataan.php");
+        header("Location: pendataan");
         exit;
     } else {
         echo "Error: " . $sql . "<br>" . $conn->error;

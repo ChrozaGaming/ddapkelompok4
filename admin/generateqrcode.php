@@ -20,7 +20,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         return;
     }
 
-    header("Location: displayqrcode.php?email=" . urlencode($email));
+    header("Location: displayqrcode?email=" . urlencode($email));
     exit;
 
 }

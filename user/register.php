@@ -19,7 +19,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         VALUES ('$namalengkap', '$no_hp', '$provinsi', '$kabupaten', '$kecamatan', '$kelurahan', '$alamat', '$email', '$hashed_password')";
 
     if ($conn->query($sql) === TRUE) {
-        header('Location: waitinglist.php');
+        header('Location: waitinglist');
     } else {
         echo "Error: " . $sql . "<br>" . $conn->error;
     }

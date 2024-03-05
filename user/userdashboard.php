@@ -3,15 +3,24 @@ session_start();
 include '../db/configdb.php';
 
 if (!isset($_SESSION['email'])) {
-    header("Location: login.php");
+    header("Location: login");
     exit;
 }
 
+
+
 $email = $_SESSION['email'];
-$sql = "SELECT namalengkap FROM users WHERE email = '$email'";
+$sql = "SELECT namalengkap, gps FROM users WHERE email = '$email'";
 $result = $conn->query($sql);
 $user = $result->fetch_assoc();
 $namalengkap = $user['namalengkap'];
+
+// Check if the user's location has been set
+if (empty($user['gps'])) {
+    // Redirect the user to the location input page
+    header("Location: location_input.php");
+    exit;
+}
 
 $conn->close();
 ?>
@@ -45,7 +54,7 @@ $conn->close();
     <a class="navbar-brand" href="#">User - Dashboard</a>
     <span class="navbar-text ml-auto">
     Selamat datang, <?php echo $namalengkap; ?>
-    <a href="logout.php" class="ml-3">
+    <a href="logout" class="ml-3">
         <i class="fas fa-door-open"></i> Keluar
     </a>
 </span>
@@ -53,14 +62,16 @@ $conn->close();
 <div id="sidebar">
     <ul class="nav flex-column">
         <li class="nav-item">
-            <a class="nav-link" href="pendataan.php">Pendataan User</a>
+            <a class="nav-link" href="pendataan">Pendataan User</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="information.php">Information</a>
+            <a class="nav-link" href="information">Information</a>
         </li>
     </ul>
 </div>
 <div id="content">
 </div>
 </body>
+
 </html>
+

@@ -8,7 +8,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         if ($action == 'accept') {
             // Redirect to the confirmation page
-            header("Location: confirm_licensekey.php?email=" . urlencode($email));
+            header("Location: confirm_licensekey?email=" . urlencode($email));
             exit;
         } else if ($action == 'reject') {
             // Delete the user's record
@@ -49,7 +49,7 @@ $result = $conn->query($sql);
             echo "<td>" . $row["alamat"] . "</td>";
             echo "<td>" . $row["email"] . "</td>";
             echo "<td>";
-            echo "<form method='post' action='userrequest.php'>";
+            echo "<form method='post' action='userrequest'>";
             echo "<input type='hidden' name='email' value='" . $row["email"] . "'>";
             echo "<button type='submit' name='action' value='accept' class='btn btn-success'><i class='fa fa-check'></i></button>";
             echo "<button type='submit' name='action' value='reject' class='btn btn-danger ml-2'><i class='fa fa-times'></i></button>";

@@ -6,7 +6,7 @@
     <title>Update Gizi Data</title>
 </head>
 <body>
-<form action="update_gizi.php" method="post">
+<form action="update_gizi" method="post">
     <label for="province_id">Provinsi:</label><br>
     <select id="province_id" name="province_id">
         <option value="id-ac">Aceh</option>

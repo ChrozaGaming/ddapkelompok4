@@ -3,7 +3,7 @@ session_start();
 include '../db/configdb.php';
 
 if (!isset($_SESSION['loggedin'])) {
-    header("Location: login.php");
+    header("Location: login");
     exit;
 }
 
@@ -46,7 +46,7 @@ $conn->close();
     <a class="navbar-brand" href="#">Dashboard</a>
     <span class="navbar-text ml-auto">
     Selamat datang, <?php echo $namalengkap; ?>
-    <a href="logout.php" class="ml-3">
+    <a href="logout" class="ml-3">
         <i class="fas fa-door-open"></i> Keluar
     </a>
 </span>
@@ -54,16 +54,16 @@ $conn->close();
 <div id="sidebar">
     <ul class="nav flex-column">
         <li class="nav-item">
-            <a class="nav-link" href="registeruser.php">Register User</a>
+            <a class="nav-link" href="registeruser">Register User</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="registersupplier.php">Register Supplier</a>
+            <a class="nav-link" href="registersupplier">Register Supplier</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="userrequest.php">User Request</a>
+            <a class="nav-link" href="userrequest">User Request</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="information.php">Information</a>
+            <a class="nav-link" href="information">Information</a>
         </li>
     </ul>
 </div>

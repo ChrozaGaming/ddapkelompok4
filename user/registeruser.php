@@ -9,7 +9,7 @@ $provinsi = json_decode($provinsiJson, true);
     <title>Register User</title>
 </head>
 <body>
-<form action="submit_register.php" method="post">
+<form action="submit_register" method="post">
     <label for="provinsi">Provinsi:</label>
     <select id="provinsi" name="provinsi">
         <?php foreach ($provinsi as $prov) : ?>

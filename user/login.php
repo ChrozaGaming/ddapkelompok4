@@ -1,7 +1,6 @@
 <?php
 include '../db/configdb.php';
 session_start();
-
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST['email'];
     $password = $_POST['password'];
@@ -15,7 +14,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (password_verify($password, $user['password'])) {
             // If the user is in the users table and the password is correct, redirect to userdashboard.php
             $_SESSION['email'] = $email;
-            header('Location: userdashboard.php');
+            header('Location: userdashboard');
             exit;
         } else {
             echo "Invalid email or password";
@@ -30,7 +29,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if (password_verify($password, $user['password'])) {
                 // If the user is in the userrequests table and the password is correct, redirect to waitinglist.php
                 $_SESSION['email'] = $email;
-                header('Location: waitinglist.php');
+                header('Location: waitinglist');
                 exit;
             } else {
                 echo "Invalid email or password";

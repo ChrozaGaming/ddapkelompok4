@@ -55,7 +55,7 @@ $conn->close();
                 </tbody>
             </table>
         <?php endif; ?>
-        <a href="admindashboard.php" class="btn btn-primary mt-3">Back to Main Menu</a>
+        <a href="admindashboard" class="btn btn-primary mt-3">Back to Main Menu</a>
         <button onclick="window.print();" class="btn btn-secondary mt-3">Print</button>
     </div>
 </div>

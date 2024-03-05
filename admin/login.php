@@ -17,7 +17,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if (password_verify($password, $user['password'])) {
                 $_SESSION['loggedin'] = true;
                 $_SESSION['email'] = $email;
-                header("Location: admindashboard.php");
+                header("Location: admindashboard");
             } else {
                 echo "Password Salah";
             }
