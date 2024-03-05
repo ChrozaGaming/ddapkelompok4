@@ -14,9 +14,11 @@
         <div class="col-md-6 offset-md-3">
             <h2 class="text-center">Input Lokasi</h2>
             <p class="text-center" style="color: red;">Silakan masukkan lokasi desa Anda dengan akurat. Pastikan bahwa informasi yang diberikan dapat dipertanggungjawabkan.</p>            <div id="map" class="mb-3" style="width: 100%; height: 500px;"></div>
+
             <label for="neighborhood">Lurah/Desa: </label>
-            <span style="user-select: none;">Balai Desa </span>
+            <span style="user-select: none;">Masukkan nama balai desa saja<br> &ensp;Tidak Perlu menuliskan  <b>Balai Desa</b> lagi!</span>
             <input type="text" class="form-control" id="neighborhood" name="neighborhood" placeholder="Masukkan nama desa">
+
             <button id="confirmButton" class="btn btn-success mb-3" style="display: none;" onclick="confirmLocation()">Konfirmasi Lokasi</button>
         </div>
     </div>
@@ -28,8 +30,8 @@
 
     function initMap() {
         map = new google.maps.Map(document.getElementById('map'), {
-            center: {lat: -6.200000, lng: 106.816666},
-            zoom: 13
+            center: {lat: -2.548926, lng: 118.0148634},
+            zoom: 4
         });
 
         var input = document.getElementById('neighborhood');
@@ -42,9 +44,13 @@
             }
         });
 
-        // Prevent the user from deleting the 'Balai Desa ' prefix
         input.addEventListener('input', function() {
-            if (!this.value.startsWith('Balai Desa ')) {
+            // Check if the input value matches the unwanted patterns
+            if (/^BALAI DESA BALAI DESA|^BALAI DESA BALAIDESA/.test(this.value.toUpperCase())) {
+                // Replace the unwanted patterns with 'Balai Desa '
+                this.value = 'Balai Desa ' + this.value.replace(/^BALAI DESA BALAI DESA |^BALAI DESA BALAIDESA /i, '');
+            } else if (!this.value.startsWith('Balai Desa ')) {
+                // If the input value doesn't start with 'Balai Desa ', prepend 'Balai Desa ' to it
                 this.value = 'Balai Desa ' + this.value.replace(/^Balai Desa /, '');
             }
         });
