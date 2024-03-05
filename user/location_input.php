@@ -34,61 +34,68 @@
             zoom: 4
         });
 
-        var input = document.getElementById('neighborhood');
+        var input = document.getElementById('neighborhood'); // Changed from 'lurah_desa' to 'neighborhood'
         var autocomplete = new google.maps.places.Autocomplete(input);
 
-        // Add 'Balai Desa ' prefix to the input field when it receives focus
-        input.addEventListener('focus', function() {
+        var previousValue = input.value;
+
+        input.addEventListener('focus', function () {
             if (!this.value.startsWith('Balai Desa ')) {
                 this.value = 'Balai Desa ' + this.value;
             }
+            previousValue = this.value;
         });
 
-        input.addEventListener('input', function() {
-            // Check if the input value matches the unwanted patterns
-            if (/^BALAI DESA BALAI DESA|^BALAI DESA BALAIDESA/.test(this.value.toUpperCase())) {
-                // Replace the unwanted patterns with 'Balai Desa '
-                this.value = 'Balai Desa ' + this.value.replace(/^BALAI DESA BALAI DESA |^BALAI DESA BALAIDESA /i, '');
-            } else if (!this.value.startsWith('Balai Desa ')) {
-                // If the input value doesn't start with 'Balai Desa ', prepend 'Balai Desa ' to it
-                this.value = 'Balai Desa ' + this.value.replace(/^Balai Desa /, '');
+        input.addEventListener('input', function () {
+            if (!this.value.startsWith('Balai Desa ')) {
+                this.value = 'Balai Desa ' + this.value;
+            } else if (this.value.startsWith('Balai Desa Balai Desa ')) {
+                this.value = this.value.replace('Balai Desa Balai Desa ', 'Balai Desa ');
             }
         });
 
-        autocomplete.addListener('place_changed', function() {
+        input.addEventListener('keydown', function (e) {
+            var selectionStart = this.selectionStart;
+            if (selectionStart < 'Balai Desa '.length) {
+                e.preventDefault();
+            }
+        });
+
+        autocomplete.addListener('place_changed', function () {
             var place = autocomplete.getPlace();
             if (!place.geometry) {
                 window.alert("No details available for input: '" + place.name + "'");
                 return;
             }
 
-            var latlon = {lat: place.geometry.location.lat(), lng: place.geometry.location.lng()};
+            // Cek apakah hasil adalah desa
+            if (place.types.includes('sublocality_level_1')) {
+                console.log("Balai Desa " + place.name);
+            } else {
+            }
 
+            // Add a marker to the map at the selected place
             if (marker) {
-                marker.setPosition(latlon);
+                marker.setPosition(place.geometry.location);
             } else {
                 marker = new google.maps.Marker({
-                    position: latlon,
+                    position: place.geometry.location,
                     map: map
                 });
             }
 
-            map.setCenter(latlon);
-            document.getElementById('confirmButton').style.display = 'block';
+            // Center the map at the selected place
+            map.setCenter(place.geometry.location);
 
-            // Prepend 'Balai Desa ' to the place's name if it doesn't already start with 'Balai Desa '
-            if (!place.name.startsWith('Balai Desa ')) {
-                input.value = 'Balai Desa ' + place.name;
-            } else {
-                input.value = place.name;
-            }
+            // Show the confirm button
+            document.getElementById('confirmButton').style.display = 'block';
         });
     }
 
     function confirmLocation() {
         if (marker) {
             var latlon = marker.getPosition();
-            var balaiDesa = document.getElementById('neighborhood').value;
+            var balaiDesa = document.getElementById('neighborhood').value; // Changed from 'lurah_desa' to 'neighborhood'
 
             var xhr = new XMLHttpRequest();
             xhr.open("POST", "update_location.php", true);
@@ -102,7 +109,8 @@
                     console.error("An error occurred: " + xhr.status);
                 }
             };
-            xhr.send("gps=" + encodeURIComponent(latlon.lat() + ',' + latlon.lng()) + "&balai_desa=" + encodeURIComponent(balaiDesa));        } else {
+            xhr.send("gps=" + encodeURIComponent(latlon.lat() + ',' + latlon.lng()) + "&balai_desa=" + encodeURIComponent(balaiDesa));
+        } else {
             alert('Please search for a location first.');
         }
     }

@@ -264,9 +264,57 @@ if (isset($_SESSION['message'])) {
         <div class="tab-pane fade" id="pendataan2" role="tabpanel" aria-labelledby="pendataan-tab2">
             <form id="formPendataan2" method="post" action="formpendataan2">
                 <div class="form-group">
-                    <label for="lurah_desa2">Lurah/Desa:</label>
+                    <label for="lurah_desa2">Lurah/Desa: </label>
+                    <span style="user-select: none;">Balai Desa </span>
                     <input type="text" class="form-control" id="lurah_desa2" name="lurah_desa2">
                 </div>
+
+                <script>
+                    var input = document.getElementById('lurah_desa2');
+                    var autocomplete = new google.maps.places.Autocomplete(input);
+
+                    var previousValue = input.value;
+
+                    input.addEventListener('focus', function () {
+                        if (!this.value.startsWith('Balai Desa ')) {
+                            this.value = 'Balai Desa ' + this.value;
+                        }
+                        previousValue = this.value;
+                    });
+
+                    input.addEventListener('click', function () {
+                        if (window.getSelection().toString().startsWith('Balai Desa ')) {
+                            this.setSelectionRange('Balai Desa '.length, this.value.length);
+                        }
+                    });
+
+                    input.addEventListener('input', function () {
+                        if (!this.value.startsWith('Balai Desa ')) {
+                            this.value = 'Balai Desa ' + this.value;
+                        }
+                    });
+
+                    input.addEventListener('keydown', function (e) {
+                        var selectionStart = this.selectionStart;
+                        if (selectionStart < 'Balai Desa '.length) {
+                            e.preventDefault();
+                        }
+                    });
+
+                    autocomplete.addListener('place_changed', function () {
+                        var place = autocomplete.getPlace();
+                        if (!place.geometry) {
+                            window.alert("No details available for input: '" + place.name + "'");
+                            return;
+                        }
+
+                        // Cek apakah hasil adalah desa
+                        if (place.types.includes('sublocality_level_1')) {
+                            console.log("Balai Desa " + place.name);
+                        } else {
+                        }
+                    });
+                </script>
 
                 <style>
                     #inputTable2 {
@@ -331,47 +379,97 @@ if (isset($_SESSION['message'])) {
                 <button type="submit" class="btn btn-primary" id="submitBtn2" style="display: none;">Kirim</button>
             </form>
             <script>
-                function updateTotalBerat2() {
-                    var beratPanganInputs = document.querySelectorAll('input[name="berat_pangan2[]"]');
-                    var totalBerat = 0;
-                    for (var i = 0; i < beratPanganInputs.length; i++) {
-                        totalBerat += Number(beratPanganInputs[i].value);
+                function updateTotalBeratForm2() {
+                    var beratPanganInputsForm2 = document.querySelectorAll('input[name="berat_pangan2[]"]');
+                    var totalBeratForm2 = 0;
+                    for (var i = 0; i < beratPanganInputsForm2.length; i++) {
+                        totalBeratForm2 += Number(beratPanganInputsForm2[i].value);
                     }
-                    document.getElementById('berat2').value = totalBerat;
+                    document.getElementById('berat2').value = totalBeratForm2;
                 }
 
-                document.getElementById('berat_pangan2').addEventListener('input', updateTotalBerat2);
+                document.getElementById('berat_pangan2').addEventListener('input', updateTotalBeratForm2);
 
-                var penghitung2 = 2;
+                var penghitungForm2 = 2;
 
                 document.getElementById('tambahInput2').addEventListener('click', function () {
-                    // Your code here
+                    var inputTableForm2 = document.getElementById('inputTable2');
+                    var newFormGroupForm2 = document.createElement('div');
+                    newFormGroupForm2.className = 'form-group';
+
+                    var newLabelForm2 = document.createElement('label');
+                    newLabelForm2.textContent = 'Jenis Pangan ' + penghitungForm2 + ':';
+                    var newInputForm2 = document.createElement('input');
+                    newInputForm2.type = 'text';
+                    newInputForm2.className = 'form-control';
+                    newInputForm2.name = 'jenis_pangan2[]';
+                    newFormGroupForm2.appendChild(newLabelForm2);
+                    newFormGroupForm2.appendChild(newInputForm2);
+
+                    var newLabelBeratForm2 = document.createElement('label');
+                    var newInputBeratForm2 = document.createElement('input');
+                    newInputBeratForm2.type = 'number';
+                    newInputBeratForm2.className = 'form-control';
+                    newInputBeratForm2.name = 'berat_pangan2[]';
+                    newInputBeratForm2.placeholder = 'Berat per (TON)';
+                    newInputBeratForm2.addEventListener('keypress', function (e) {
+                        var char = String.fromCharCode(e.which);
+                        if (!(/[0-9,]/.test(char))) {
+                            e.preventDefault();
+                        }
+                    });
+                    newInputBeratForm2.addEventListener('input', updateTotalBeratForm2);
+
+                    newFormGroupForm2.appendChild(newLabelBeratForm2);
+                    newFormGroupForm2.appendChild(newInputBeratForm2);
+
+                    inputTableForm2.appendChild(newFormGroupForm2);
+                    penghitungForm2++;
                 });
 
                 document.getElementById('undoInput2').addEventListener('click', function () {
-                    // Your code here
+                    var inputTable = document.getElementById('inputTable2');
+                    if (inputTable.children.length > 1) {
+                        inputTable.removeChild(inputTable.lastChild);
+                        penghitung--;
+                    }
                 });
 
                 document.getElementById('resetInput2').addEventListener('click', function () {
-                    // Your code here
+                    var confirmation = confirm("Apakah anda yakin untuk mereset row yang sudah anda buat?");
+                    if (confirmation) {
+                        var inputTable = document.getElementById('inputTable2');
+                        while (inputTable.children.length > 1) {
+                            inputTable.removeChild(inputTable.lastChild);
+                        }
+                        penghitung = 2;
+
+                        // Mengambil semua elemen input
+                        var inputs = document.querySelectorAll('input');
+
+                        // Mengatur ulang nilai input
+                        for (var i = 0; i < inputs.length; i++) {
+                            inputs[i].value = '';
+                        }
+                    }
                 });
 
-                var inputs2 = Array.from(document.querySelectorAll('#formPendataan2 input'));
-                var submitBtn2 = document.getElementById('submitBtn2');
+                var inputsForm2 = Array.from(document.querySelectorAll('#formPendataan2 input'));
+                var submitBtnForm2 = document.getElementById('submitBtn2');
 
-                function checkInputs2() {
-                    var allFilled = inputs2.every(function (input) {
+                function checkInputsForm2() {
+                    var allFilledForm2 = inputsForm2.every(function (input) {
                         return input.value !== '';
                     });
-                    submitBtn2.style.display = allFilled ? 'inline-block' : 'none';
+                    submitBtnForm2.style.display = allFilledForm2 ? 'inline-block' : 'none';
                 }
 
-                inputs2.forEach(function (input) {
-                    input.addEventListener('input', checkInputs2);
+                inputsForm2.forEach(function (input) {
+                    input.addEventListener('input', checkInputsForm2);
                 });
 
                 // document.getElementById('formPendataan2').addEventListener('submit', function (event) {
-                //     if (!checkInputs2()) {
+                //     if (!checkInputsForm2()) {
                 //         event.preventDefault();
                 //         document.getElementById('error-message').textContent = 'Harap isi semua kolom input sebelum mengirim.';
                 //     }
