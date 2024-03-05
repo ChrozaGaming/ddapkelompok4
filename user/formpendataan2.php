@@ -1,31 +1,37 @@
 <?php
-// Koneksi ke database
-$db = new mysqli('localhost', 'root', '', 'ddap4gizi');
+session_start();
+include '../db/configdb.php';
 
-if ($db->connect_error) {
-    die("Connection failed: " . $db->connect_error);
+if (!isset($_SESSION['email'])) {
+    // Redirect to login page
+    header('Location: login.php');
+    exit;
 }
 
-// Mengambil data dari form
-$lurah_desa = $_POST['lurah_desa2'];
-$jenis_pangan = implode(',', $_POST['jenis_pangan2']);
-$berat_pangan = implode(',', $_POST['berat_pangan2']);
-$berat = floatval($_POST['berat2']); // Convert berat to float
-$distributor = $_POST['distributor2'];
-$gps = $_POST['gps2'];
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $lurah_desa2 = mysqli_real_escape_string($conn, $_POST['lurah_desa2']);
+    $jenis_pangan2 = implode(", ", $_POST['jenis_pangan2']); // handle jenis_pangan as an array
+    $jenis_pangan2 = mysqli_real_escape_string($conn, $jenis_pangan2);
+    $berat_pangan2 = implode(", ", $_POST['berat_pangan2']);
+    $berat_pangan2 = mysqli_real_escape_string($conn, $berat_pangan2);
+    $berat2 = mysqli_real_escape_string($conn, $_POST['berat2']);
+    $distributor2 = mysqli_real_escape_string($conn, $_POST['distributor2']);
+    $gps2 = mysqli_real_escape_string($conn, $_POST['gps2']);
 
-// Menyimpan data ke database
-$sql = "INSERT INTO pendataan2 (lurah_desa, jenis_pangan, berat_pangan, berat, distributor, gps) VALUES (?, ?, ?, ?, ?, ?)";
-$stmt = $db->prepare($sql);
-$stmt->bind_param("ssssss", $lurah_desa, $jenis_pangan, $berat_pangan, $berat, $distributor, $gps);
+    // Retrieve the email from the session
+    $email2 = $_SESSION['email'];
 
-if ($stmt->execute()) {
-    echo "Data berhasil disimpan";
-} else {
-    echo "Error: " . $stmt->error;
-    echo "DB Error: " . $db->error;
+    $sql2 = "INSERT INTO pendataan2 (lurah_desa, jenis_pangan, berat_pangan, berat, distributor, gps, email)
+        VALUES ('$lurah_desa2', '$jenis_pangan2', '$berat_pangan2', '$berat2', '$distributor2', '$gps2', '$email2')";
+
+    if ($conn->query($sql2) === TRUE) {
+        $_SESSION['message'] = "Data berhasil disimpan.";
+    } else {
+        echo "Error: " . $sql2 . "<br>" . $conn->error;
+    }
+
+    // Redirect ke halaman yang sama
+    header("Location: formpendataan2");
+    exit;
 }
-
-$stmt->close();
-$db->close();
 ?>

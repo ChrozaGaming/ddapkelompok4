@@ -5,6 +5,12 @@ if (isset($_SESSION['message'])) {
     echo "<script>alert('" . $_SESSION['message'] . "')</script>";
     unset($_SESSION['message']);
 }
+
+if (!isset($_SESSION['email'])) {
+    header('Location: login.php');
+    exit;
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -30,10 +36,10 @@ if (isset($_SESSION['message'])) {
             <a class="nav-link" id="pendataan-tab2" data-toggle="tab" href="#pendataan2" role="tab"
                aria-controls="pendataan2" aria-selected="false">Pengajuan</a>
         </li>
-        <li class="nav-item">
-            <a class="nav-link" id="pendistribusian-tab" data-toggle="tab" href="#pendistribusian" role="tab"
-               aria-controls="pendistribusian" aria-selected="false">Pendistribusian</a>
-        </li>
+<!--        <li class="nav-item">-->
+<!--            <a class="nav-link" id="pendistribusian-tab" data-toggle="tab" href="#pendistribusian" role="tab"-->
+<!--               aria-controls="pendistribusian" aria-selected="false">Pendistribusian</a>-->
+<!--        </li>-->
     </ul>
     <div class="tab-content" id="myTabContent">
         <div class="tab-pane fade show active" id="pendataan" role="tabpanel" aria-labelledby="pendataan-tab">
