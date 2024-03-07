@@ -27,6 +27,21 @@ $user = $result->fetch_assoc();
 $balai_desa = $user['balai_desa'];
 $gps = $user['gps'];
 
+// Check if the email already exists in the table
+$sql = "SELECT * FROM pendataan WHERE email = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("s", $email);
+$stmt->execute();
+$result = $stmt->get_result();
+
+// If the email already exists, set the button text to 'Update'
+if ($result->num_rows > 0) {
+    $buttonText = 'Update';
+} else {
+    // If the email doesn't exist, set the button text to 'Kirim'
+    $buttonText = 'Kirim';
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -184,7 +199,7 @@ $gps = $user['gps'];
                 <br>
                 <br>
                 <button type="reset" class="btn btn-secondary">Batal</button>
-                <button type="submit" class="btn btn-primary" id="submitBtn">Kirim</button>            </form>
+                <button type="submit" class="btn btn-primary" id="submitBtn"><?php echo $buttonText; ?></button>          </form>
             <script>
                 function updateTotalBerat() {
                     var beratPanganInputs = document.querySelectorAll('input[name="berat_pangan[]"]');

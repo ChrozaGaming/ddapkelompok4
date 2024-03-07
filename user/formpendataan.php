@@ -16,7 +16,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Include your database configuration file
     include '../db/configdb.php';
 
-    // Prepare an SQL statement to insert the form data into the database
+    // Check if the email already exists in the table
+    $sql = "SELECT * FROM pendataan WHERE email = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    // If the email already exists, delete the existing row
+    if ($result->num_rows > 0) {
+        $sql = "DELETE FROM pendataan WHERE email = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+    }
+
+    // Prepare an SQL statement to insert the new data into the database
     $sql = "INSERT INTO pendataan (jenis_pangan, berat_pangan, berat, distributor, gps, lurah_desa, email) VALUES (?, ?, ?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
 
