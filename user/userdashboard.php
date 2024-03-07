@@ -7,7 +7,7 @@ if (!isset($_SESSION['email'])) {
     exit;
 }
 
-
+        
 
 $email = $_SESSION['email'];
 $sql = "SELECT namalengkap, gps FROM users WHERE email = '$email'";
