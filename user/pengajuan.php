@@ -1,8 +1,10 @@
 <?php
 include '../db/configdb.php';
 
-$id = $_GET['id'];
-$lurah_desa = urldecode($_GET['lurah_desa']);
+session_start(); // Start the session
+
+$id = isset($_GET['id']) ? $_GET['id'] : null;
+$lurah_desa = isset($_GET['lurah_desa']) ? urldecode($_GET['lurah_desa']) : null;
 
 $sql = "SELECT distributor, jenis_pangan, berat_pangan FROM pendataan WHERE id = ? AND lurah_desa = ?";
 $stmt = $conn->prepare($sql);
@@ -15,9 +17,31 @@ while ($row = $result->fetch_assoc()) {
     $data[] = $row;
 }
 
+$sql = "SELECT balai_desa FROM users WHERE email = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("s", $_SESSION['email']);
+$stmt->execute();
+$result = $stmt->get_result();
+$user = $result->fetch_assoc();
+$balai_desa = $user['balai_desa'];
+
+$sql = "SELECT namalengkap, no_hp, alamat, gps FROM users WHERE email = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("s", $_SESSION['email']);
+$stmt->execute();
+$result = $stmt->get_result();
+$user = $result->fetch_assoc();
+$nama_lengkap = $user['namalengkap'];
+$no_handphone = $user['no_hp'];
+$alamat = $user['alamat'];
+$gps = $user['gps'];
+
+
 $stmt->close();
 $conn->close();
 ?>
+
+
 
 <!DOCTYPE html>
 <html>
@@ -25,13 +49,25 @@ $conn->close();
     <title>Pengajuan</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            document.getElementById('addButton').addEventListener('click', function() {
+                document.getElementById('submitBtn').style.display = 'block';
+            });
+        });
+    </script>
+    <style>
+        #submitBtn {
+            display: none;
+        }
+    </style>
 </head>
 <body>
 <div class="container">
     <h2 class="my-3">Pengajuan</h2>
-    <form action="permintaan.php" method="post">
+    <form action="submit_pengajuan.php?id=<?php echo $id; ?>&email=<?php echo urlencode($_SESSION['email']); ?>" method="post">
         <div class="form-group">
-            <label for="lurah_desa">Lurah Desa:</label>
+            <label for="lurah_desa">Pengajuan Balai Desa:</label>
             <input type="text" id="lurah_desa" name="lurah_desa" class="form-control" value="<?php echo $lurah_desa; ?>" readonly>
         </div>
         <div class="form-group">
@@ -42,10 +78,43 @@ $conn->close();
                 <?php endforeach; ?>
             </select>
         </div>
+        <hr> <!-- Pembatas -->
+        <h3>Identitas Pengaju</h3> <!-- Judul -->
+
+        <div class="form-group">
+            <label for="nama_lengkap">Nama Lengkap:</label>
+            <input type="text" id="nama_lengkap" name="nama_lengkap" class="form-control" value="<?php echo $nama_lengkap; ?>" readonly>
+        </div>
+
+        <div class="form-group">
+            <label for="no_handphone">No Handphone:</label>
+            <input type="text" id="no_handphone" name="no_handphone" class="form-control" value="<?php echo $no_handphone; ?>" readonly>
+        </div>
+
+        <div class="form-group">
+            <label for="alamat">Alamat:</label>
+            <input type="text" id="alamat" name="alamat" class="form-control" value="<?php echo $alamat; ?>" readonly>
+        </div>
+
+        <div class="form-group">
+            <label for="gps">GPS:</label>
+            <input type="text" id="gps" name="gps" class="form-control" value="<?php echo $gps; ?>" readonly>
+        </div>
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" class="form-control" value="<?php echo $_SESSION['email']; ?>" readonly>
+        </div>
+        <div class="form-group">
+            <label for="balai_desa">Asal Balai Desa:</label>
+            <input type="text" id="balai_desa" name="balai_desa" class="form-control" value="<?php echo $balai_desa; ?>" readonly>
+        </div>
+        <h3>Data Diajukan</h3>
         <div id="dynamicFields"></div>
-        <button type="button" id="addButton" class="btn btn-success mt-4">Tambah</button>
-        <button type="button" id="hapusButton" class="btn btn-danger mt-4" onclick="if(confirm('Apakah anda setuju untuk mereset dan menghapus semua data?')) location.reload();">Reset</button>
-        <button type="submit" class="btn btn-primary mt-4">Submit</button>
+        <div style="display: flex; flex-direction: row;">
+            <button type="button" id="addButton" class="btn btn-success mt-4" style="margin-right: 1mm;">Tambah</button>
+            <button type="button" id="hapusButton" class="btn btn-danger mt-4" style="margin-right: 1mm;" onclick="if(confirm('Apakah anda setuju untuk mereset dan menghapus semua data?')) location.reload();">Reset</button>
+            <button type="submit" id="submitBtn" class="btn btn-primary mt-4">Submit</button>
+        </div>
     </form>
 </div>
 <script>
@@ -54,6 +123,21 @@ $conn->close();
     var dynamicFields = document.getElementById('dynamicFields');
     var jenisPanganCount = <?php echo count(explode(',', $data[0]['jenis_pangan'])); ?>;
     var addedFields = 0;
+
+    document.querySelector('form').addEventListener('submit', function(event) {
+        var beratPanganInput = document.querySelectorAll('input[name="berat_pangan[]"]');
+        var totalBeratPangan = 0;
+        beratPanganInput.forEach(function(input) {
+            totalBeratPangan += Number(input.value);
+        });
+
+        var maxBeratPangan = <?php echo $data[0]['berat_pangan']; ?>; // asumsikan $data[0]['berat_pangan'] adalah total berat pangan maksimum
+
+        if (totalBeratPangan > maxBeratPangan) {
+            event.preventDefault(); // mencegah form disubmit
+            alert('Total berat pangan tidak boleh melebihi ' + maxBeratPangan + ' ton.');
+        }
+    });
 
     addButton.addEventListener('click', function() {
         if (addedFields < jenisPanganCount) {
