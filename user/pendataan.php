@@ -64,8 +64,8 @@ $gps = $user['gps'];
                 <div class="form-group">
                     <label for="lurah_desa">Lurah/Desa: </label>
                     <span style="user-select: none;">Balai Desa </span>
-                    <input type="text" class="form-control" id="lurah_desa" name="lurah_desa"
-                           value="<?php echo $balai_desa; ?>" readonly>
+                    <input type="text" class="form-control" id="lurah_desa" name="lurah_desa" value="<?php echo $balai_desa; ?>" readonly>
+                    <input type="hidden" name="lurah_desa" value="<?php echo $balai_desa; ?>">
                 </div>
 
                 <script>
@@ -175,8 +175,7 @@ $gps = $user['gps'];
                 <br>
                 <br>
                 <button type="reset" class="btn btn-secondary">Batal</button>
-                <button type="submit" class="btn btn-primary" id="submitBtn" style="display: none;">Kirim</button>
-            </form>
+                <button type="submit" class="btn btn-primary" id="submitBtn">Kirim</button>            </form>
             <script>
                 function updateTotalBerat() {
                     var beratPanganInputs = document.querySelectorAll('input[name="berat_pangan[]"]');
@@ -293,6 +292,7 @@ $gps = $user['gps'];
 </div>
 </body>
 </html>
+
 
 <script>
     // Initialize the map for 'mapid1'

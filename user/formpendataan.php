@@ -1,37 +1,39 @@
 <?php
+// Start the session
 session_start();
-include '../db/configdb.php';
 
-if (!isset($_SESSION['email'])) {
-    // Redirect to login page
-    header('Location: login.php');
-    exit;
-}
-
+// Check if the form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $lurah_desa = mysqli_real_escape_string($conn, $_POST['lurah_desa']);
-    $jenis_pangan = implode(", ", $_POST['jenis_pangan']); // handle jenis_pangan as an array
-    $jenis_pangan = mysqli_real_escape_string($conn, $jenis_pangan);
+    // Get the form data
+    $jenis_pangan = implode(", ", $_POST['jenis_pangan']);
     $berat_pangan = implode(", ", $_POST['berat_pangan']);
-    $berat_pangan = mysqli_real_escape_string($conn, $berat_pangan);
-    $berat = mysqli_real_escape_string($conn, $_POST['berat']);
-    $distributor = mysqli_real_escape_string($conn, $_POST['distributor']);
-    $gps = mysqli_real_escape_string($conn, $_POST['gps']);
+    $berat = $_POST['berat'];
+    $distributor = $_POST['distributor'];
+    $gps = $_POST['gps'];
+    $lurah_desa = $_POST['lurah_desa']; // Get the 'lurah_desa' data from the form data
+    $email = $_SESSION['email']; // Get the 'email' data from the session
 
-    // Retrieve the email from the session
-    $email = $_SESSION['email'];
+    // Include your database configuration file
+    include '../db/configdb.php';
 
-    $sql = "INSERT INTO pendataan (lurah_desa, jenis_pangan, berat_pangan, berat, distributor, gps, email)
-        VALUES ('$lurah_desa', '$jenis_pangan', '$berat_pangan', '$berat', '$distributor', '$gps', '$email')";
+    // Prepare an SQL statement to insert the form data into the database
+    $sql = "INSERT INTO pendataan (jenis_pangan, berat_pangan, berat, distributor, gps, lurah_desa, email) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    $stmt = $conn->prepare($sql);
 
-    if ($conn->query($sql) === TRUE) {
-        $_SESSION['message'] = "Data berhasil disimpan.";
+    // Bind the parameters and execute the SQL statement
+    $stmt->bind_param("sssssss", $jenis_pangan, $berat_pangan, $berat, $distributor, $gps, $lurah_desa, $email);
+
+    // Execute the SQL statement
+    if ($stmt->execute()) {
+        // The data was inserted successfully
+        echo "Data was inserted successfully.";
     } else {
-        echo "Error: " . $sql . "<br>" . $conn->error;
+        // There was an error inserting the data
+        echo "Error: " . $stmt->error;
     }
 
-    // Redirect ke halaman yang sama
-    header("Location: pendataan");
-    exit;
+    // Close the statement and the database connection
+    $stmt->close();
+    $conn->close();
 }
 ?>
