@@ -1,140 +1,195 @@
 <?php
 include '../db/configdb.php';
 
-$id = $_GET['id'];
-$lurah_desa = urldecode($_GET['lurah_desa']);
+session_start();
 
-$sql = "SELECT distributor, jenis_pangan, berat_pangan FROM pendataan WHERE id = ? AND lurah_desa = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("is", $id, $lurah_desa);
-$stmt->execute();
-$result = $stmt->get_result();
-
-$data = array();
-while ($row = $result->fetch_assoc()) {
-    $data[] = $row;
+if (!isset($_SESSION['email'])) {
+    header('Location: login.php');
+    exit;
 }
 
-$stmt->close();
-$conn->close();
+$email = $_SESSION['email'];
+
+$jenis_pangan = isset($_POST['jenis_pangan']) ? $_POST['jenis_pangan'] : [];
+$i = 0;
+
+if (is_array($jenis_pangan) && array_key_exists($i, $jenis_pangan)) {
+    $element = $jenis_pangan[$i];
+} else {
+    $element = null;
+}
+
+$sql = "SELECT gps FROM users WHERE email = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("s", $email);
+$stmt->execute();
+$result = $stmt->get_result();
+$user = $result->fetch_assoc();
+$user_gps = explode(",", $user['gps']);
+
+$sql = "SELECT id, lurah_desa, jenis_pangan, berat_pangan, berat, distributor, gps,
+        ( 6371 * acos( cos( radians(?) ) * cos( radians( SUBSTRING_INDEX(gps, ',', 1) ) ) * cos( radians( SUBSTRING_INDEX(gps, ',', -1) ) - radians(?) ) + sin( radians(?) ) * sin(radians( SUBSTRING_INDEX(gps, ',', 1) )) ) ) AS distance
+        FROM pendataan
+        WHERE email != ?
+        ORDER BY distance";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("ddds", $user_gps[0], $user_gps[1], $user_gps[0], $email);
+$stmt->execute();
+
+$result = $stmt->get_result();
 ?>
 
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Pengajuan</title>
+    <title>Data Pendataan</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.permintaan-btn').click(function () {
+                var collapseElementId = $(this).attr('data-target');
+                var collapseElement = $(collapseElementId);
+                var button = $(this);
+
+                button.prop('disabled', true);
+
+                if ($(collapseElement).hasClass('show')) {
+                    button.text('Tampilkan Data');
+                } else {
+                    button.text('Sembunyikan Data');
+                }
+
+                setTimeout(function () {
+                    $(collapseElement).collapse('toggle');
+                }, 350);
+
+                setTimeout(function () {
+                    button.prop('disabled', false);
+                }, 700);
+            });
+        });
+    </script>
 </head>
 <body>
 <div class="container">
-    <h2 class="my-3">Pengajuan</h2>
-    <form action="permintaan.php" method="post">
-        <div class="form-group">
-            <label for="lurah_desa">Lurah Desa:</label>
-            <input type="text" id="lurah_desa" name="lurah_desa" class="form-control" value="<?php echo $lurah_desa; ?>" readonly>
-        </div>
-        <div class="form-group">
-            <label for="distributor">Distributor:</label>
-            <select id="distributor" name="distributor" class="form-control">
-                <?php foreach ($data as $row): ?>
-                    <option value="<?php echo $row['distributor']; ?>"><?php echo $row['distributor']; ?></option>
-                <?php endforeach; ?>
-            </select>
-        </div>
-        <div id="dynamicFields"></div>
-        <button type="button" id="addButton" class="btn btn-success mt-4">Tambah</button>
-        <button type="button" id="hapusButton" class="btn btn-danger mt-4" onclick="if(confirm('Apakah anda setuju untuk mereset dan menghapus semua data?')) location.reload();">Reset</button>
-        <button type="submit" class="btn btn-primary mt-4">Submit</button>
-    </form>
-</div>
-<script>
-    var addButton = document.getElementById('addButton');
-    var undoButton = document.getElementById('undoButton');
-    var dynamicFields = document.getElementById('dynamicFields');
-    var jenisPanganCount = <?php echo count(explode(',', $data[0]['jenis_pangan'])); ?>;
-    var addedFields = 0;
+    <h2 class="my-3">Data Pendataan</h2>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Lurah Desa</th>
+            <th>Distributor</th>
+            <th>Koordinat</th>
+            <th>Jarak (km)</th>
+            <th class="text-center">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php
+        $counter = 1;
+        while ($row = $result->fetch_assoc()): ?>
+            <tr>
+                <td><?php echo $counter; ?></td>
+                <td><?php echo $row["lurah_desa"]; ?></td>
+                <td><?php echo $row["distributor"]; ?></td>
+                <td><?php echo $row["gps"]; ?></td>
+                <td><?php echo floor($row["distance"]) . ' km'; ?></td>
+                <td class="text-center">
+                    <div style="display: flex; gap: 1mm;">
+                        <button class="btn btn-primary permintaan-btn" type="button" data-toggle="collapse"
+                                data-target="#collapse<?php echo $counter; ?>" aria-expanded="false"
+                                aria-controls="collapse<?php echo $counter; ?>" onclick="changeButtonText(this)">
+                            Tampilkan Data
+                        </button>
+                        <a href="pengajuan.php?id=<?php echo $row['id']; ?>&lurah_desa=<?php echo urlencode($row['lurah_desa']); ?>&distributor=<?php echo urlencode($row['distributor']); ?>&jenis_pangan=<?php echo urlencode($row['jenis_pangan']); ?>&berat_pangan=<?php echo urlencode($row['berat_pangan']); ?>"
+                           class="btn btn-success d-flex align-items-center" target="_blank">
+                            Pengajuan
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            <?php
+            $jenis_pangan = explode(',', $row["jenis_pangan"]);
+            $berat_pangan = explode(',', $row["berat_pangan"]);
+            $jenis_pangan_counter = 1;
+            for ($i = 0; $i < count($jenis_pangan); $i++): ?>
+                <tr class="collapse" id="collapse<?php echo $counter; ?>">
+                    <td colspan="6">
+                        <?php
+                        echo '<style>';
+                        echo '.inner-table {';
+                        echo '  border: 1px solid black;';
+                        echo '  border-collapse: collapse;';
+                        echo '  border-radius: 10px;';
+                        echo '  overflow: hidden;';
+                        echo '}';
+                        echo '.inner-table th, .inner-table td {';
+                        echo '  border: 1px solid black;';
+                        echo '  padding: 10px;';
+                        echo '}';
+                        echo '</style>';
 
-    addButton.addEventListener('click', function() {
-        if (addedFields < jenisPanganCount) {
-            var newRow = document.createElement('div');
-            newRow.className = 'row';
-
-            var newFormGroup1 = document.createElement('div');
-            newFormGroup1.className = 'form-group col-md-5';
-            var newLabel1 = document.createElement('label');
-            newLabel1.textContent = 'Jenis Pangan ' + (addedFields + 1) + ':';
-            var newSelect = document.createElement('select');
-            newSelect.id = 'jenis_pangan' + addedFields;
-            newSelect.name = 'jenis_pangan[]';
-            newSelect.className = 'form-control';
-
-            var jenisPanganArray = <?php echo json_encode(explode(',', $data[0]['jenis_pangan'])); ?>;
-            for (var i = 0; i < jenisPanganArray.length; i++) {
-                var newOption = document.createElement('option');
-                newOption.value = jenisPanganArray[i];
-                newOption.textContent = jenisPanganArray[i];
-                newSelect.appendChild(newOption);
-            }
-
-            newSelect.selectedIndex = addedFields;
-
-            newFormGroup1.appendChild(newLabel1);
-            newFormGroup1.appendChild(newSelect);
-
-            newSelect.addEventListener('change', updateOptions);
-
-            var newFormGroup2 = document.createElement('div');
-            newFormGroup2.className = 'form-group col-md-5 ml-1';
-            var newLabel2 = document.createElement('label');
-            newLabel2.textContent = 'Berat Pangan ' + (addedFields + 1) + ':' + ' (TON) ';
-            var newInput = document.createElement('input');
-            newInput.type = 'number';
-            newInput.id = 'berat_pangan' + addedFields;
-            newInput.name = 'berat_pangan[]';
-            newInput.className = 'form-control';
-            newFormGroup2.appendChild(newLabel2);
-            newFormGroup2.appendChild(newInput);
-
-            newRow.appendChild(newFormGroup1);
-            newRow.appendChild(newFormGroup2);
-            dynamicFields.appendChild(newRow);
-
-            addedFields++;
-            setTimeout(updateOptions, 0);
-        }
-        if (addedFields >= jenisPanganCount) {
-            addButton.disabled = true;
-        }
-    });
-
-    undoButton.addEventListener('click', function() {
-        if (addedFields > 0) {
-            dynamicFields.removeChild(dynamicFields.lastChild);
-            addedFields--;
-            updateOptions();
-        }
-    });
-
-
-    function updateOptions() {
-        var selectedOptions = [];
-        for (var i = 0; i < addedFields; i++) {
-            var select = document.getElementById('jenis_pangan' + i);
-            if (select.value) {
-                selectedOptions.push(select.value);
-            }
-        }
-        for (var i = 0; i < addedFields; i++) {
-            var select = document.getElementById('jenis_pangan' + i);
-            var options = Array.from(select.options);
-            options.forEach(function(option) {
-                if (selectedOptions.includes(option.value) && select.value != option.value) {
-                    select.removeChild(option);
+                        echo '<table class="inner-table">';
+                        echo '<tr><th>ID</th><th>Jenis Pangan</th><th>Berat Pangan</th></tr>';
+                        for ($i = 0; $i < count($jenis_pangan); $i++):
+                            echo '<tr>';
+                            echo '<td>' . $jenis_pangan_counter . '</td>';
+                            echo '<td>' . $jenis_pangan[$i] . '</td>';
+                            echo '<td>' . $berat_pangan[$i] . 'ton' . '</td>';
+                            echo '</tr>';
+                            $jenis_pangan_counter++;
+                        endfor;
+                        echo '</table>';
+                        ?>
+                    </td>
+                </tr>
+                <?php
+                $jenis_pangan_counter++;
+            endfor; ?>
+            <style>
+                tr:nth-child(even) {
+                    background-color: #f2f2f2 !important;
                 }
-            });
-        }
-    }
-</script>
+
+                tr:nth-child(odd) {
+                    background-color: #ffffff !important;
+                }
+            </style>
+            <?php
+            $counter++;
+        endwhile; ?>
+        </tbody>
+    </table>
+</div>
 </body>
 </html>
+
+<script>
+    $(document).ready(function () {
+        var id = $('#lurah_desa').val();
+
+        $.ajax({
+            url: 'fetch_data.php',
+            method: 'POST',
+            data: {id: id},
+            dataType: 'json',
+            success: function (data) {
+                $('#distributor').empty();
+                $('#jenis_pangan[]').empty();
+
+                $.each(data, function (key, value) {
+                    $('#distributor').append('<option value="' + value.distributor + '">' + value.distributor + '</option>');
+                    $('#jenis_pangan[]').append('<option value="' + value.jenis_pangan + '">' + value.jenis_pangan + '</option>');
+                    $('#berat_pangan[]').val(value.berat_pangan);
+                });
+            }
+        });
+    });
+</script>
+
+<?php
+$stmt->close();
+$conn->close();
+?>
