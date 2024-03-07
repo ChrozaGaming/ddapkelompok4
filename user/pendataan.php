@@ -113,6 +113,15 @@ $gps = $user['gps'];
                         } else {
                         }
                     });
+
+                    window.onload = function() {
+                        var input = document.getElementById('lurah_desa');
+                        var inputValue = input.value;
+
+                        if (!inputValue.includes('Balai Desa')) {
+                            input.value = 'Balai Desa ' + inputValue;
+                        }
+                    }
                 </script>
 
                 <style>
