@@ -1,13 +1,11 @@
 <?php
-include '../db/configdb.php'; // Include your database configuration file
+include '../db/configdb.php';
 
 if (session_status() == PHP_SESSION_NONE) {
-    // session has not started
     session_start();
 }
 
 if (!isset($_SESSION['email'])) {
-    // Redirect to login page or show an error
     header('Location: login.php');
     exit;
 }
@@ -20,10 +18,9 @@ $i = 0;
 if (is_array($jenis_pangan) && array_key_exists($i, $jenis_pangan)) {
     $element = $jenis_pangan[$i];
 } else {
-    $element = null; // Set a default value for $element if $jenis_pangan[$i] is not set
+    $element = null;
 }
 
-// Fetch the GPS coordinates of the logged-in user
 $sql = "SELECT gps FROM users WHERE email = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("s", $email);
@@ -48,7 +45,6 @@ $result = $stmt->get_result();
     <html>
     <head>
         <title>Data Pendataan</title>
-        <!-- Include Bootstrap CSS -->
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -59,7 +55,6 @@ $result = $stmt->get_result();
                     var collapseElement = $(collapseElementId);
                     var button = $(this);
 
-                    // Disable the button
                     button.prop('disabled', true);
 
                     if ($(collapseElement).hasClass('show')) {
@@ -68,15 +63,13 @@ $result = $stmt->get_result();
                         button.text('Sembunyikan Data');
                     }
 
-                    // Add a delay to ensure the collapse animation completes
                     setTimeout(function () {
                         $(collapseElement).collapse('toggle');
                     }, 350);
 
-                    // Enable the button after the animation completes
                     setTimeout(function () {
                         button.prop('disabled', false);
-                    }, 700); // Adjust this value based on the duration of your animation
+                    }, 700);
                 });
             });
         </script>
@@ -97,10 +90,10 @@ $result = $stmt->get_result();
             </thead>
             <tbody>
             <?php
-            $counter = 1; // Initialize counter
+            $counter = 1;
             while ($row = $result->fetch_assoc()): ?>
                 <tr>
-                    <td><?php echo $counter; ?></td> <!-- Display counter without incrementing it -->
+                    <td><?php echo $counter; ?></td>
                     <td><?php echo $row["lurah_desa"]; ?></td>
                     <td><?php echo $row["distributor"]; ?></td>
                     <td><?php echo $row["gps"]; ?></td>
@@ -122,7 +115,7 @@ $result = $stmt->get_result();
                 <?php
                 $jenis_pangan = explode(',', $row["jenis_pangan"]);
                 $berat_pangan = explode(',', $row["berat_pangan"]);
-                $jenis_pangan_counter = 1; // Initialize jenis_pangan counter
+                $jenis_pangan_counter = 1;
                 for ($i = 0; $i < count($jenis_pangan); $i++): ?>
                     <tr class="collapse" id="collapse<?php echo $counter; ?>">
                         <td colspan="6">
@@ -131,8 +124,8 @@ $result = $stmt->get_result();
                             echo '.inner-table {';
                             echo '  border: 1px solid black;';
                             echo '  border-collapse: collapse;';
-                            echo '  border-radius: 10px;'; // This will make the border corners rounded
-                            echo '  overflow: hidden;'; // This is necessary for border-radius to work on tables
+                            echo '  border-radius: 10px;';
+                            echo '  overflow: hidden;';
                             echo '}';
                             echo '.inner-table th, .inner-table td {';
                             echo '  border: 1px solid black;';
@@ -141,36 +134,33 @@ $result = $stmt->get_result();
                             echo '</style>';
 
                             echo '<table class="inner-table">';
-                            echo '<tr><th>ID</th><th>Jenis Pangan</th><th>Berat Pangan</th></tr>'; // Table headers
+                            echo '<tr><th>ID</th><th>Jenis Pangan</th><th>Berat Pangan</th></tr>';
                             for ($i = 0; $i < count($jenis_pangan); $i++):
                                 echo '<tr>';
-                                echo '<td>' . $jenis_pangan_counter . '</td>'; // ID data
-                                echo '<td>' . $jenis_pangan[$i] . '</td>'; // jenis_pangan data
-                                echo '<td>' . $berat_pangan[$i] . 'ton' . '</td>'; // berat_pangan data
+                                echo '<td>' . $jenis_pangan_counter . '</td>';
+                                echo '<td>' . $jenis_pangan[$i] . '</td>';
+                                echo '<td>' . $berat_pangan[$i] . 'ton' . '</td>';
                                 echo '</tr>';
-                                $jenis_pangan_counter++; // Increment the jenis_pangan counter inside the loop
+                                $jenis_pangan_counter++;
                             endfor;
                             echo '</table>';
                             ?>
                         </td>
                     </tr>
                     <?php
-                    $jenis_pangan_counter++; // Increment the jenis_pangan counter inside the loop
+                    $jenis_pangan_counter++;
                 endfor; ?>
                 <style>
                     tr:nth-child(even) {
                         background-color: #f2f2f2 !important;
                     }
 
-                    /* Gray for even rows */
                     tr:nth-child(odd) {
                         background-color: #ffffff !important;
                     }
-
-                    /* White for odd rows */
                 </style>
                 <?php
-                $counter++; // Increment the counter after creating the collapsible element
+                $counter++;
             endwhile; ?>
             </tbody>
         </table>
@@ -200,7 +190,6 @@ $result = $stmt->get_result();
             });
         });
     </script>
-
 
 <?php
 $stmt->close();
