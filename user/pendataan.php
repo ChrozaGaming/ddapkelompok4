@@ -79,7 +79,8 @@ if ($result->num_rows > 0) {
                 <div class="form-group">
                     <label for="lurah_desa">Lurah/Desa: </label>
                     <span style="user-select: none;">Balai Desa </span>
-                    <input type="text" class="form-control" id="lurah_desa" name="lurah_desa" value="<?php echo $balai_desa; ?>" readonly>
+                    <input type="text" class="form-control" id="lurah_desa" name="lurah_desa"
+                           value="<?php echo $balai_desa; ?>" readonly>
                     <input type="hidden" name="lurah_desa" value="<?php echo $balai_desa; ?>">
                 </div>
 
@@ -129,7 +130,7 @@ if ($result->num_rows > 0) {
                         }
                     });
 
-                    window.onload = function() {
+                    window.onload = function () {
                         var input = document.getElementById('lurah_desa');
                         var inputValue = input.value;
 
@@ -199,7 +200,8 @@ if ($result->num_rows > 0) {
                 <br>
                 <br>
                 <button type="reset" class="btn btn-secondary">Batal</button>
-                <button type="submit" class="btn btn-primary" id="submitBtn"><?php echo $buttonText; ?></button>          </form>
+                <button type="submit" class="btn btn-primary" id="submitBtn"><?php echo $buttonText; ?></button>
+            </form>
             <script>
                 function updateTotalBerat() {
                     var beratPanganInputs = document.querySelectorAll('input[name="berat_pangan[]"]');

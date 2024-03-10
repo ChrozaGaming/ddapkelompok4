@@ -79,6 +79,12 @@ $result = $stmt->get_result();
         <h2 class="my-3">Data Pendataan</h2>
         <table class="table table-striped">
             <thead>
+            <?php if (isset($_SESSION['alertMessage'])): ?>
+                <div class="alert alert-warning">
+                    <?php echo $_SESSION['alertMessage']; ?>
+                    <?php unset($_SESSION['alertMessage']); ?>
+                </div>
+            <?php endif; ?>
             <tr>
                 <th>ID</th>
                 <th>Lurah Desa</th>
@@ -190,6 +196,8 @@ $result = $stmt->get_result();
             });
         });
     </script>
+
+
 
 <?php
 $stmt->close();

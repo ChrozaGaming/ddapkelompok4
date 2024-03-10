@@ -1,6 +1,10 @@
 <?php
 include '../db/configdb.php';
 
+if ($conn === null) {
+    die("Connection failed: Unable to connect to the database");
+}
+
 session_start();
 
 $id = isset($_GET['id']) ? $_GET['id'] : null;
@@ -156,6 +160,36 @@ $conn->close();
         if (addedFields >= jenisPanganCount) {
             addButton.disabled = true;
         }
+    });
+</script>
+
+<script>
+    document.querySelector('form').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent the form from being submitted immediately
+
+        var beratPanganInput = document.querySelectorAll('input[name="berat_pangan[]"]');
+        var totalBeratPangan = 0;
+        beratPanganInput.forEach(function(input) {
+            totalBeratPangan += Number(input.value);
+        });
+
+        var id = <?php echo $id; ?>; // Get the id from the PHP variable
+
+        // Make an AJAX request to fetch the berat for the given id
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', 'fetch_berat.php?id=' + id, true); // Set the URL to your PHP script
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                var maxBeratPangan = Number(xhr.responseText);
+
+                if (totalBeratPangan > maxBeratPangan) {
+                    alert('Salah satu dari total berat pangan, tidak memenuhi standar dari kapasitas pendataan' );
+                } else {
+                    event.target.submit(); // Submit the form if the total berat pangan does not exceed the max berat pangan
+                }
+            }
+        };
+        xhr.send();
     });
 </script>
 </body>
