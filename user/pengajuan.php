@@ -1,7 +1,7 @@
 <?php
 include '../db/configdb.php';
 
-session_start(); // Start the session
+session_start();
 
 $id = isset($_GET['id']) ? $_GET['id'] : null;
 $lurah_desa = isset($_GET['lurah_desa']) ? urldecode($_GET['lurah_desa']) : null;
@@ -36,12 +36,9 @@ $no_handphone = $user['no_hp'];
 $alamat = $user['alamat'];
 $gps = $user['gps'];
 
-
 $stmt->close();
 $conn->close();
 ?>
-
-
 
 <!DOCTYPE html>
 <html>
@@ -49,18 +46,6 @@ $conn->close();
     <title>Pengajuan</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', (event) => {
-            document.getElementById('addButton').addEventListener('click', function() {
-                document.getElementById('submitBtn').style.display = 'block';
-            });
-        });
-    </script>
-    <style>
-        #submitBtn {
-            display: none;
-        }
-    </style>
 </head>
 <body>
 <div class="container">
@@ -78,8 +63,8 @@ $conn->close();
                 <?php endforeach; ?>
             </select>
         </div>
-        <hr> <!-- Pembatas -->
-        <h3>Identitas Pengaju</h3> <!-- Judul -->
+        <hr>
+        <h3>Identitas Pengaju</h3>
 
         <div class="form-group">
             <label for="nama_lengkap">Nama Lengkap:</label>
@@ -119,25 +104,9 @@ $conn->close();
 </div>
 <script>
     var addButton = document.getElementById('addButton');
-    var undoButton = document.getElementById('undoButton');
     var dynamicFields = document.getElementById('dynamicFields');
     var jenisPanganCount = <?php echo count(explode(',', $data[0]['jenis_pangan'])); ?>;
     var addedFields = 0;
-
-    document.querySelector('form').addEventListener('submit', function(event) {
-        var beratPanganInput = document.querySelectorAll('input[name="berat_pangan[]"]');
-        var totalBeratPangan = 0;
-        beratPanganInput.forEach(function(input) {
-            totalBeratPangan += Number(input.value);
-        });
-
-        var maxBeratPangan = <?php echo $data[0]['berat_pangan']; ?>; // asumsikan $data[0]['berat_pangan'] adalah total berat pangan maksimum
-
-        if (totalBeratPangan > maxBeratPangan) {
-            event.preventDefault(); // mencegah form disubmit
-            alert('Total berat pangan tidak boleh melebihi ' + maxBeratPangan + ' ton.');
-        }
-    });
 
     addButton.addEventListener('click', function() {
         if (addedFields < jenisPanganCount) {
@@ -166,8 +135,6 @@ $conn->close();
             newFormGroup1.appendChild(newLabel1);
             newFormGroup1.appendChild(newSelect);
 
-            newSelect.addEventListener('change', updateOptions);
-
             var newFormGroup2 = document.createElement('div');
             newFormGroup2.className = 'form-group col-md-5 ml-1';
             var newLabel2 = document.createElement('label');
@@ -185,40 +152,11 @@ $conn->close();
             dynamicFields.appendChild(newRow);
 
             addedFields++;
-            setTimeout(updateOptions, 0);
         }
         if (addedFields >= jenisPanganCount) {
             addButton.disabled = true;
         }
     });
-
-    undoButton.addEventListener('click', function() {
-        if (addedFields > 0) {
-            dynamicFields.removeChild(dynamicFields.lastChild);
-            addedFields--;
-            updateOptions();
-        }
-    });
-
-
-    function updateOptions() {
-        var selectedOptions = [];
-        for (var i = 0; i < addedFields; i++) {
-            var select = document.getElementById('jenis_pangan' + i);
-            if (select.value) {
-                selectedOptions.push(select.value);
-            }
-        }
-        for (var i = 0; i < addedFields; i++) {
-            var select = document.getElementById('jenis_pangan' + i);
-            var options = Array.from(select.options);
-            options.forEach(function(option) {
-                if (selectedOptions.includes(option.value) && select.value != option.value) {
-                    select.removeChild(option);
-                }
-            });
-        }
-    }
 </script>
 </body>
 </html>

@@ -1,0 +1,11 @@
+{
+  "dependencies": {
+    "@types/select2": "^4.0.63",
+    "axios": "^1.6.7",
+    "express": "^4.18.2",
+    "geografis": "^1.3.2"
+  },
+  "devDependencies": {
+    "@types/jquery": "^3.5.29"
+  }
+}
