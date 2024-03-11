@@ -29,7 +29,7 @@ $result = $stmt->get_result();
 $user = $result->fetch_assoc();
 $user_gps = explode(",", $user['gps']);
 
-$sql = "SELECT id, lurah_desa, jenis_pangan, berat_pangan, berat, distributor, gps,
+$sql = "SELECT id, lurah_desa, jenis_pangan, berat_pangan, berat, distributor, gps, email,
         ( 6371 * acos( cos( radians(?) ) * cos( radians( SUBSTRING_INDEX(gps, ',', 1) ) ) * cos( radians( SUBSTRING_INDEX(gps, ',', -1) ) - radians(?) ) + sin( radians(?) ) * sin(radians( SUBSTRING_INDEX(gps, ',', 1) )) ) ) AS distance
         FROM pendataan
         WHERE email != ?

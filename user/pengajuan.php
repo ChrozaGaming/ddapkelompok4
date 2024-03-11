@@ -5,7 +5,25 @@ if ($conn === null) {
     die("Connection failed: Unable to connect to the database");
 }
 
-session_start();
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+
+if (!isset($_SESSION['email'])) {
+    header('Location: login.php');
+    exit;
+}
+
+$id = $_GET['id']; // Get the id from the URL
+
+// Fetch the email from the pendataan table
+$sql = "SELECT email FROM pendataan WHERE id = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $id);
+$stmt->execute();
+$result = $stmt->get_result();
+$row = $result->fetch_assoc();
+$email_balaidesa_tujuan = $row ? $row['email'] : '';
 
 $id = isset($_GET['id']) ? $_GET['id'] : null;
 $lurah_desa = isset($_GET['lurah_desa']) ? urldecode($_GET['lurah_desa']) : null;
@@ -58,6 +76,10 @@ $conn->close();
         <div class="form-group">
             <label for="lurah_desa">Pengajuan Balai Desa:</label>
             <input type="text" id="lurah_desa" name="lurah_desa" class="form-control" value="<?php echo $lurah_desa; ?>" readonly>
+        </div>
+        <div class="form-group">
+            <label for="email_balaidesa_tujuan">Email Balai Desa Tujuan:</label>
+            <input type="email" id="email_balaidesa_tujuan" name="email_balaidesa_tujuan" class="form-control" value="<?php echo $email_balaidesa_tujuan; ?>" readonly>
         </div>
         <div class="form-group">
             <label for="distributor">Distributor:</label>
