@@ -190,6 +190,7 @@ $conn->close();
         event.preventDefault(); // Prevent the form from being submitted immediately
 
         var beratPanganInput = document.querySelectorAll('input[name="berat_pangan[]"]');
+        var jenisPanganInput = document.querySelectorAll('select[name="jenis_pangan[]"]');
         var totalBeratPangan = 0;
         beratPanganInput.forEach(function(input) {
             totalBeratPangan += Number(input.value);
@@ -202,10 +203,20 @@ $conn->close();
         xhr.open('GET', 'fetch_berat.php?id=' + id, true); // Set the URL to your PHP script
         xhr.onload = function() {
             if (xhr.status === 200) {
-                var maxBeratPangan = Number(xhr.responseText);
+                var data = JSON.parse(xhr.responseText);
+                var isValid = true;
 
-                if (totalBeratPangan > maxBeratPangan) {
-                    alert('Salah satu dari total berat pangan, tidak memenuhi standar dari kapasitas pendataan' );
+                jenisPanganInput.forEach(function(input, index) {
+                    var jenisPangan = input.value;
+                    var beratPangan = Number(beratPanganInput[index].value);
+
+                    if (beratPangan > Number(data[jenisPangan])) {
+                        isValid = false;
+                    }
+                });
+
+                if (!isValid) {
+                    alert('Salah satu dari jenis pangan tidak memenuhi standar dari kapasitas pendataan');
                 } else {
                     event.target.submit(); // Submit the form if the total berat pangan does not exceed the max berat pangan
                 }
