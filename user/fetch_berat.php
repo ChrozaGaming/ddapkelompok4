@@ -4,7 +4,7 @@ include '../db/configdb.php';
 $id = isset($_GET['id']) ? $_GET['id'] : null;
 
 if ($id !== null) {
-    $sql = "SELECT berat_pangan FROM pendataan WHERE id = ?";
+    $sql = "SELECT jenis_pangan, berat_pangan FROM pendataan WHERE id = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $id);
     $stmt->execute();
@@ -12,9 +12,10 @@ if ($id !== null) {
     $row = $result->fetch_assoc();
 
     if ($row) {
+        $jenisPanganArray = explode(',', $row['jenis_pangan']);
         $beratPanganArray = explode(',', $row['berat_pangan']);
-        $totalBeratPangan = array_sum(array_map('floatval', $beratPanganArray));
-        echo $totalBeratPangan;
+        $data = array_combine($jenisPanganArray, $beratPanganArray);
+        echo json_encode($data);
     } else {
         echo "No data found for the given id.";
     }
