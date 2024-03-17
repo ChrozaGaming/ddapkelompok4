@@ -72,14 +72,17 @@ $conn->close();
 <body>
 <div class="container">
     <h2 class="my-3">Pengajuan</h2>
-    <form action="submit_pengajuan.php?id=<?php echo $id; ?>&email=<?php echo urlencode($_SESSION['email']); ?>" method="post">
+    <form action="submit_pengajuan.php?id=<?php echo $id; ?>&email=<?php echo urlencode($_SESSION['email']); ?>"
+          method="post">
         <div class="form-group">
             <label for="lurah_desa">Pengajuan Balai Desa:</label>
-            <input type="text" id="lurah_desa" name="lurah_desa" class="form-control" value="<?php echo $lurah_desa; ?>" readonly>
+            <input type="text" id="lurah_desa" name="lurah_desa" class="form-control" value="<?php echo $lurah_desa; ?>"
+                   readonly>
         </div>
         <div class="form-group">
             <label for="email_balaidesa_tujuan">Email Balai Desa Tujuan:</label>
-            <input type="email" id="email_balaidesa_tujuan" name="email_balaidesa_tujuan" class="form-control" value="<?php echo $email_balaidesa_tujuan; ?>" readonly>
+            <input type="email" id="email_balaidesa_tujuan" name="email_balaidesa_tujuan" class="form-control"
+                   value="<?php echo $email_balaidesa_tujuan; ?>" readonly>
         </div>
         <div class="form-group">
             <label for="distributor">Distributor:</label>
@@ -94,12 +97,14 @@ $conn->close();
 
         <div class="form-group">
             <label for="nama_lengkap">Nama Lengkap:</label>
-            <input type="text" id="nama_lengkap" name="nama_lengkap" class="form-control" value="<?php echo $nama_lengkap; ?>" readonly>
+            <input type="text" id="nama_lengkap" name="nama_lengkap" class="form-control"
+                   value="<?php echo $nama_lengkap; ?>" readonly>
         </div>
 
         <div class="form-group">
             <label for="no_handphone">No Handphone:</label>
-            <input type="text" id="no_handphone" name="no_handphone" class="form-control" value="<?php echo $no_handphone; ?>" readonly>
+            <input type="text" id="no_handphone" name="no_handphone" class="form-control"
+                   value="<?php echo $no_handphone; ?>" readonly>
         </div>
 
         <div class="form-group">
@@ -113,19 +118,23 @@ $conn->close();
         </div>
         <div class="form-group">
             <label for="email">Email:</label>
-            <input type="email" id="email" name="email" class="form-control" value="<?php echo $_SESSION['email']; ?>" readonly>
+            <input type="email" id="email" name="email" class="form-control" value="<?php echo $_SESSION['email']; ?>"
+                   readonly>
         </div>
         <div class="form-group">
             <label for="balai_desa">Asal Balai Desa:</label>
-            <input type="text" id="balai_desa" name="balai_desa" class="form-control" value="<?php echo $balai_desa; ?>" readonly>
+            <input type="text" id="balai_desa" name="balai_desa" class="form-control" value="<?php echo $balai_desa; ?>"
+                   readonly>
         </div>
         <h3>Data Diajukan</h3>
         <div id="dynamicFields"></div>
         <div style="display: flex; flex-direction: row;">
             <button type="button" id="addButton" class="btn btn-success mt-4" style="margin-right: 1mm;">Tambah</button>
-            <button type="button" id="hapusButton" class="btn btn-danger mt-4" style="margin-right: 1mm;" onclick="if(confirm('Apakah anda setuju untuk mereset dan menghapus semua data?')) location.reload();">Reset</button>
-            <button type="submit" id="submitBtn" class="btn btn-primary mt-4">Submit</button>
-        </div>
+            <button type="button" id="hapusButton" class="btn btn-danger mt-4" style="margin-right: 1mm;"
+                    onclick="if(confirm('Apakah anda setuju untuk mereset dan menghapus semua data?')) location.reload();">
+                Reset
+            </button>
+            <button type="submit" class="btn btn-primary mt-4" id="submitBtn" style="display: none; margin-right: 1mm;">Submit</button>        </div>
     </form>
 </div>
 <script>
@@ -134,7 +143,7 @@ $conn->close();
     var jenisPanganCount = <?php echo count(explode(',', $data[0]['jenis_pangan'])); ?>;
     var addedFields = 0;
 
-    addButton.addEventListener('click', function() {
+    addButton.addEventListener('click', function () {
         if (addedFields < jenisPanganCount) {
             var newRow = document.createElement('div');
             newRow.className = 'row';
@@ -182,17 +191,18 @@ $conn->close();
         if (addedFields >= jenisPanganCount) {
             addButton.disabled = true;
         }
+        document.getElementById('submitBtn').style.display = 'block';
     });
 </script>
 
 <script>
-    document.querySelector('form').addEventListener('submit', function(event) {
+    document.querySelector('form').addEventListener('submit', function (event) {
         event.preventDefault(); // Prevent the form from being submitted immediately
 
         var beratPanganInput = document.querySelectorAll('input[name="berat_pangan[]"]');
         var jenisPanganInput = document.querySelectorAll('select[name="jenis_pangan[]"]');
         var totalBeratPangan = 0;
-        beratPanganInput.forEach(function(input) {
+        beratPanganInput.forEach(function (input) {
             totalBeratPangan += Number(input.value);
         });
 
@@ -201,12 +211,12 @@ $conn->close();
         // Make an AJAX request to fetch the berat for the given id
         var xhr = new XMLHttpRequest();
         xhr.open('GET', 'fetch_berat.php?id=' + id, true); // Set the URL to your PHP script
-        xhr.onload = function() {
+        xhr.onload = function () {
             if (xhr.status === 200) {
                 var data = JSON.parse(xhr.responseText);
                 var isValid = true;
 
-                jenisPanganInput.forEach(function(input, index) {
+                jenisPanganInput.forEach(function (input, index) {
                     var jenisPangan = input.value;
                     var beratPangan = Number(beratPanganInput[index].value);
 
