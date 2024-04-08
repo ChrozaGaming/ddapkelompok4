@@ -259,14 +259,14 @@ if ($stmt->execute()) {
                     <table class="table">
                         <thead>
                         <tr>
-                            <th>Lurah Desa</th>
+                            <th>Desa Anda</th>
                             <th>Distributor</th>
                             <th>Nama Lengkap</th>
                             <th>No Handphone</th>
                             <th>Alamat</th>
                             <th>GPS</th>
                             <th>Email</th>
-                            <th>Balai Desa</th>
+                            <th>Tujuan</th>
                             <th>Pangan</th>
                             <th>Action</th>
                         </tr>
@@ -305,7 +305,7 @@ if ($stmt->execute()) {
                                 <td>
                                     <ul class="action-list">
                                         <li><a href="#" data-tip="Setuju"><i class="fa fa-check"></i></a></li>
-                                        <li><a href="#" data-tip="Hapus"><i class="fa fa-trash"></i></a></li>
+                                        <li><a href="#" data-tip="Tolak"><i class="fa fa-trash"></i></a></li>
                                     </ul>
                                 </td>
                             </tr>
