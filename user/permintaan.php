@@ -25,7 +25,7 @@ $sql = "SELECT gps FROM users WHERE email = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("s", $email);
 $stmt->execute();
-$result = $stmt->get_result();
+$result = $stmt->get_result(); 
 $user = $result->fetch_assoc();
 $user_gps = explode(",", $user['gps']);
 

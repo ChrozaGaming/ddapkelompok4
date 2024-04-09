@@ -12,6 +12,8 @@ if (!isset($_SESSION['email'])) {
     exit;
 }
 
+
+
 // Get the email of the currently logged in user
 $email = $_SESSION['email'];
 
@@ -67,10 +69,6 @@ if ($result->num_rows > 0) {
             <a class="nav-link" id="permintaan-tab" data-toggle="tab" href="#permintaan" role="tab"
                aria-controls="permintaan" aria-selected="false">Permintaan</a>
         </li>
-        <!--        <li class="nav-item">-->
-        <!--            <a class="nav-link" id="pendistribusian-tab" data-toggle="tab" href="#pendistribusian" role="tab"-->
-        <!--               aria-controls="pendistribusian" aria-selected="false">Pendistribusian</a>-->
-        <!--        </li>-->
     </ul>
     <div class="tab-content" id="myTabContent">
         <div class="tab-pane fade show active" id="pendataan" role="tabpanel" aria-labelledby="pendataan-tab">
@@ -80,7 +78,7 @@ if ($result->num_rows > 0) {
                     <label for="lurah_desa">Lurah/Desa: </label>
                     <span style="user-select: none;">Balai Desa </span>
                     <input type="text" class="form-control" id="lurah_desa" name="lurah_desa"
-                           value="<?php echo $balai_desa; ?>" readonly>
+                           value="<?php echo $balai_desa; ?>" readonly      >
                     <input type="hidden" name="lurah_desa" value="<?php echo $balai_desa; ?>">
                 </div>
 
@@ -95,7 +93,7 @@ if ($result->num_rows > 0) {
                             this.value = 'Balai Desa ' + this.value;
                         }
                         previousValue = this.value;
-                    });
+                    }); // todo: check
 
                     input.addEventListener('click', function () {
                         if (window.getSelection().toString().startsWith('Balai Desa ')) {
@@ -154,7 +152,7 @@ if ($result->num_rows > 0) {
                         align-items: start;
                     }
 
-                    #berat_pangan1 {
+                    #berat_ pangan1 {
                         padding: 10px;
                         margin-top: 8px;
                         bottom: 30%;
@@ -173,10 +171,11 @@ if ($result->num_rows > 0) {
                 <div id="inputTable">
                     <div class="form-group">
                         <label for="jenis_pangan1">Jenis Pangan 1:</label>
-                        <input type="text" class="form-control" id="jenis_pangan1" name="jenis_pangan[]">
-                        <!--                        <label for="berat_pangan1">Berat per KG:</label>-->
-                        <input type="number" class="form-control" id="berat_pangan1" name="berat_pangan[]"
-                               placeholder="Berat per (TON)">
+                        <input type="text" class="form-control" id="jenis_pangan1" name="jenis_pangan[]" placeholder="">
+                        <label for="berat_pangan1">Berat per (TON):</label>
+                        <input type="number" class="form-control" id="berat_pangan1" name="berat_pangan[]" placeholder="Berat per (TON)">
+                        <label for="harga_pangan1">Harga per TON:</label>
+                        <input type="number" class="form-control" id="harga_pangan1" name="harga_pangan[]" placeholder="Harga per TON">
                     </div>
                 </div>
                 <button type="button" id="tambahInput" class="btn btn-secondary">Tambah</button>
@@ -231,6 +230,7 @@ if ($result->num_rows > 0) {
                     newFormGroup.appendChild(newInput);
 
                     var newLabelBerat = document.createElement('label');
+                    newLabelBerat.textContent = 'Berat per (TON):';
                     var newInputBerat = document.createElement('input');
                     newInputBerat.type = 'number';
                     newInputBerat.className = 'form-control';
@@ -246,6 +246,17 @@ if ($result->num_rows > 0) {
 
                     newFormGroup.appendChild(newLabelBerat);
                     newFormGroup.appendChild(newInputBerat);
+
+                    // Tambahkan input untuk harga pangan
+                    var newLabelHarga = document.createElement('label');
+                    newLabelHarga.textContent = 'Harga per TON:';
+                    var newInputHarga = document.createElement('input');
+                    newInputHarga.type = 'number';
+                    newInputHarga.className = 'form-control';
+                    newInputHarga.name = 'harga_pangan[]';
+                    newInputHarga.placeholder = 'Harga per TON';
+                    newFormGroup.appendChild(newLabelHarga);
+                    newFormGroup.appendChild(newInputHarga);
 
                     inputTable.appendChild(newFormGroup);
                     penghitung++;

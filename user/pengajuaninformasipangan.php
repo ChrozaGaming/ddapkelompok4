@@ -7,7 +7,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $jenis_pangan = implode(", ", $_POST['jenis_pangan']); // handle jenis_pangan as an array
     $jenis_pangan = mysqli_real_escape_string($conn, $jenis_pangan);
     $berat = mysqli_real_escape_string($conn, $_POST['berat']);
-    $distributor = mysqli_real_escape_string($conn, $_POST['distributor']);
+    $distributor     = mysqli_real_escape_string($conn, $_POST['distributor']);
     $gps = mysqli_real_escape_string($conn, $_POST['gps']);
 
     $sql = "INSERT INTO informasipangan (lurah_desa, jenis_pangan, berat, distributor, gps)
@@ -17,7 +17,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $_SESSION['message'] = "Data berhasil disimpan.";
     } else {
         echo "Error: " . $sql . "<br>" . $conn->error;
-    }
+    } 
 
     // Redirect ke halaman yang sama
     header("Location: pendataan");

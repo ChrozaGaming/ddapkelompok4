@@ -7,6 +7,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Get the form data
     $jenis_pangan = implode(", ", $_POST['jenis_pangan']);
     $berat_pangan = implode(", ", $_POST['berat_pangan']);
+    $harga_pangan = implode(", ", $_POST['harga_pangan']); // Added line for harga_pangan
     $berat = $_POST['berat'];
     $distributor = $_POST['distributor'];
     $gps = $_POST['gps'];
@@ -32,11 +33,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Prepare an SQL statement to insert the new data into the database
-    $sql = "INSERT INTO pendataan (jenis_pangan, berat_pangan, berat, distributor, gps, lurah_desa, email) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    $sql = "INSERT INTO pendataan (jenis_pangan, berat_pangan, harga_pangan, berat, distributor, gps, lurah_desa, email) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
 
     // Bind the parameters and execute the SQL statement
-    $stmt->bind_param("sssssss", $jenis_pangan, $berat_pangan, $berat, $distributor, $gps, $lurah_desa, $email);
+    $stmt->bind_param("ssssssss", $jenis_pangan, $berat_pangan, $harga_pangan, $berat, $distributor, $gps, $lurah_desa, $email);
 
     // Execute the SQL statement
     if ($stmt->execute()) {
