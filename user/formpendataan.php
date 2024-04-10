@@ -14,6 +14,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $lurah_desa = $_POST['lurah_desa']; // Get the 'lurah_desa' data from the form data
     $email = $_SESSION['email']; // Get the 'email' data from the session
 
+    $totalHarga = 0;
+    for ($i = 0; $i < count($_POST['harga_pangan']); $i++) {
+        $totalHarga += $_POST['harga_pangan'][$i] * $_POST['berat_pangan'][$i];
+    }
+
+
     // Include your database configuration file
     include '../db/configdb.php';
 
@@ -32,23 +38,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->execute();
     }
 
-    // Prepare an SQL statement to insert the new data into the database
-    $sql = "INSERT INTO pendataan (jenis_pangan, berat_pangan, harga_pangan, berat, distributor, gps, lurah_desa, email) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    $sql = "INSERT INTO pendataan (jenis_pangan, berat_pangan, harga_pangan, berat, distributor, gps, lurah_desa, email, total_harga) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE jenis_pangan=VALUES(jenis_pangan), berat_pangan=VALUES(berat_pangan), harga_pangan=VALUES(harga_pangan), berat=VALUES(berat), distributor=VALUES(distributor), gps=VALUES(gps), lurah_desa=VALUES(lurah_desa), total_harga=VALUES(total_harga)";
     $stmt = $conn->prepare($sql);
-
-    // Bind the parameters and execute the SQL statement
-    $stmt->bind_param("ssssssss", $jenis_pangan, $berat_pangan, $harga_pangan, $berat, $distributor, $gps, $lurah_desa, $email);
-
-    // Execute the SQL statement
+    $stmt->bind_param("ssssssssd", $jenis_pangan, $berat_pangan, $harga_pangan, $berat, $distributor, $gps, $lurah_desa, $email, $totalHarga);
     if ($stmt->execute()) {
-        // The data was inserted successfully
         echo "Data was inserted successfully.";
     } else {
-        // There was an error inserting the data
         echo "Error: " . $stmt->error;
     }
-
-    // Close the statement and the database connection
     $stmt->close();
     $conn->close();
 }

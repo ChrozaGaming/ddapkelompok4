@@ -44,290 +44,330 @@ if ($result->num_rows > 0) {
     $buttonText = 'Kirim';
 }
 
+$sql = "SELECT total_harga FROM pendataan WHERE email = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("s", $email);
+$stmt->execute();
+$result = $stmt->get_result();
+if ($row = $result->fetch_assoc()) {
+    $totalHarga = $row['total_harga'];
+} else {
+    $totalHarga = 0; // Atau nilai default lainnya jika tidak ditemukan
+}
+$stmt->close();
+
 ?>
 
 <!DOCTYPE html>
 <html>
+
 <head>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css"/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
     <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBcqpq8QdjwYc2tnglKoyvpvdZAmEjSxKM&libraries=places"></script>
 </head>
+
 <body>
-<div class="container mt-5">
-    <ul class="nav nav-tabs" id="myTab" role="tablist">
-        <li class="nav-item">
-            <a class="nav-link active" id="pendataan-tab" data-toggle="tab" href="#pendataan" role="tab"
-               aria-controls="pendataan" aria-selected="true">Pendataan</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" id="permintaan-tab" data-toggle="tab" href="#permintaan" role="tab"
-               aria-controls="permintaan" aria-selected="false">Permintaan</a>
-        </li>
-    </ul>
-    <div class="tab-content" id="myTabContent">
-        <div class="tab-pane fade show active" id="pendataan" role="tabpanel" aria-labelledby="pendataan-tab">
-            <!-- Form Pengajuan -->
-            <form id="formPendataan" method="post" action="formpendataan">
-                <div class="form-group">
-                    <label for="lurah_desa">Lurah/Desa: </label>
-                    <span style="user-select: none;">Balai Desa </span>
-                    <input type="text" class="form-control" id="lurah_desa" name="lurah_desa"
-                           value="<?php echo $balai_desa; ?>" readonly      >
-                    <input type="hidden" name="lurah_desa" value="<?php echo $balai_desa; ?>">
-                </div>
-
-                <script>
-                    var input = document.getElementById('lurah_desa');
-                    var autocomplete = new google.maps.places.Autocomplete(input);
-
-                    var previousValue = input.value;
-
-                    input.addEventListener('focus', function () {
-                        if (!this.value.startsWith('Balai Desa ')) {
-                            this.value = 'Balai Desa ' + this.value;
-                        }
-                        previousValue = this.value;
-                    }); // todo: check
-
-                    input.addEventListener('click', function () {
-                        if (window.getSelection().toString().startsWith('Balai Desa ')) {
-                            this.setSelectionRange('Balai Desa '.length, this.value.length);
-                        }
-                    });
-
-                    input.addEventListener('input', function () {
-                        if (!this.value.startsWith('Balai Desa ')) {
-                            this.value = 'Balai Desa ' + this.value;
-                        }
-                    });
-
-                    input.addEventListener('keydown', function (e) {
-                        var selectionStart = this.selectionStart;
-                        if (selectionStart < 'Balai Desa '.length) {
-                            e.preventDefault();
-                        }
-                    });
-
-                    autocomplete.addListener('place_changed', function () {
-                        var place = autocomplete.getPlace();
-                        if (!place.geometry) {
-                            window.alert("No details available for input: '" + place.name + "'");
-                            return;
-                        }
-
-                        // Cek apakah hasil adalah desa
-                        if (place.types.includes('sublocality_level_1')) {
-                            console.log("Balai Desa " + place.name);
-                        } else {
-                        }
-                    });
-
-                    window.onload = function () {
-                        var input = document.getElementById('lurah_desa');
-                        var inputValue = input.value;
-
-                        if (!inputValue.includes('Balai Desa')) {
-                            input.value = 'Balai Desa ' + inputValue;
-                        }
-                    }
-                </script>
-
-                <style>
-                    #inputTable {
-                        display: flex;
-                        flex-wrap: wrap;
-                        justify-content: start;
-                        flex-direction: row; /* Baris baru */
-                    }
-
-                    .form-group {
-                        display: flex;
-                        flex-direction: column;
-                        align-items: start;
-                    }
-
-                    #berat_ pangan1 {
-                        padding: 10px;
-                        margin-top: 8px;
-                        bottom: 30%;
-                    }
-
-                    .form-control {
-                        width: 100%;
-                    }
-
-                    input::placeholder {
-                        color: rgba(0, 0, 0, 0.5); /* Change opacity here */
-                    }
-
-                </style>
-
-                <div id="inputTable">
+    <div class="container mt-5">
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" id="pendataan-tab" data-toggle="tab" href="#pendataan" role="tab" aria-controls="pendataan" aria-selected="true">Pendataan</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="permintaan-tab" data-toggle="tab" href="#permintaan" role="tab" aria-controls="permintaan" aria-selected="false">Permintaan</a>
+            </li>
+        </ul>
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="pendataan" role="tabpanel" aria-labelledby="pendataan-tab">
+                <!-- Form Pengajuan -->
+                <form id="formPendataan" method="post" action="formpendataan">
                     <div class="form-group">
-                        <label for="jenis_pangan1">Jenis Pangan 1:</label>
-                        <input type="text" class="form-control" id="jenis_pangan1" name="jenis_pangan[]" placeholder="">
-                        <label for="berat_pangan1">Berat per (TON):</label>
-                        <input type="number" class="form-control" id="berat_pangan1" name="berat_pangan[]" placeholder="Berat per (TON)">
-                        <label for="harga_pangan1">Harga per TON:</label>
-                        <input type="number" class="form-control" id="harga_pangan1" name="harga_pangan[]" placeholder="Harga per TON">
+                        <label for="lurah_desa">Lurah/Desa: </label>
+                        <span style="user-select: none;">Balai Desa </span>
+                        <input type="text" class="form-control" id="lurah_desa" name="lurah_desa" value="<?php echo $balai_desa; ?>" readonly>
+                        <input type="hidden" name="lurah_desa" value="<?php echo $balai_desa; ?>">
                     </div>
-                </div>
-                <button type="button" id="tambahInput" class="btn btn-secondary">Tambah</button>
-                <button type="button" id="undoInput" class="btn btn-secondary">Hapus</button>
-                <button type="button" id="resetInput" class="btn btn-secondary">Reset</button>
 
-                <div class="form-group">
-                    <label for="berat">Berat Total (TON):</label>
-                    <input type="number" class="form-control" id="berat" name="berat" readonly>
-                </div>
-                <div class="form-group">
-                    <label for="distributor">Distributor:</label>
-                    <input type="text" class="form-control" id="distributor" name="distributor">
-                </div>
-                <div class="form-group">
-                    <label for="gps">Set GPS/Lokasi:</label>
-                    <input type="text" class="form-control" id="gps" name="gps" value="<?php echo $gps; ?>" readonly>
-                </div>
-                <div id="mapid1" style="height: 500px;"></div>
-                <br>
-                <br>
-                <br>
-                <button type="reset" class="btn btn-secondary">Batal</button>
-                <button type="submit" class="btn btn-primary" id="submitBtn"><?php echo $buttonText; ?></button>
-            </form>
-            <script>
-                function updateTotalBerat() {
-                    var beratPanganInputs = document.querySelectorAll('input[name="berat_pangan[]"]');
-                    var totalBerat = 0;
-                    for (var i = 0; i < beratPanganInputs.length; i++) {
-                        totalBerat += Number(beratPanganInputs[i].value);
-                    }
-                    document.getElementById('berat').value = totalBerat;
-                }
+                    <script>
+                        var input = document.getElementById('lurah_desa');
+                        var autocomplete = new google.maps.places.Autocomplete(input);
 
-                document.getElementById('berat_pangan1').addEventListener('input', updateTotalBerat);
+                        var previousValue = input.value;
 
-                var penghitung = 2;
+                        input.addEventListener('focus', function() {
+                            if (!this.value.startsWith('Balai Desa ')) {
+                                this.value = 'Balai Desa ' + this.value;
+                            }
+                            previousValue = this.value;
+                        }); // todo: check
 
-                document.getElementById('tambahInput').addEventListener('click', function () {
-                    var inputTable = document.getElementById('inputTable');
-                    var newFormGroup = document.createElement('div');
-                    newFormGroup.className = 'form-group';
+                        input.addEventListener('click', function() {
+                            if (window.getSelection().toString().startsWith('Balai Desa ')) {
+                                this.setSelectionRange('Balai Desa '.length, this.value.length);
+                            }
+                        });
 
-                    var newLabel = document.createElement('label');
-                    newLabel.textContent = 'Jenis Pangan ' + penghitung + ':';
-                    var newInput = document.createElement('input');
-                    newInput.type = 'text';
-                    newInput.className = 'form-control';
-                    newInput.name = 'jenis_pangan[]';
-                    newFormGroup.appendChild(newLabel);
-                    newFormGroup.appendChild(newInput);
+                        input.addEventListener('input', function() {
+                            if (!this.value.startsWith('Balai Desa ')) {
+                                this.value = 'Balai Desa ' + this.value;
+                            }
+                        });
 
-                    var newLabelBerat = document.createElement('label');
-                    newLabelBerat.textContent = 'Berat per (TON):';
-                    var newInputBerat = document.createElement('input');
-                    newInputBerat.type = 'number';
-                    newInputBerat.className = 'form-control';
-                    newInputBerat.name = 'berat_pangan[]';
-                    newInputBerat.placeholder = 'Berat per (TON)';
-                    newInputBerat.addEventListener('keypress', function (e) {
-                        var char = String.fromCharCode(e.which);
-                        if (!(/[0-9,]/.test(char))) {
-                            e.preventDefault();
+                        input.addEventListener('keydown', function(e) {
+                            var selectionStart = this.selectionStart;
+                            if (selectionStart < 'Balai Desa '.length) {
+                                e.preventDefault();
+                            }
+                        });
+
+                        autocomplete.addListener('place_changed', function() {
+                            var place = autocomplete.getPlace();
+                            if (!place.geometry) {
+                                window.alert("No details available for input: '" + place.name + "'");
+                                return;
+                            }
+
+                            // Cek apakah hasil adalah desa
+                            if (place.types.includes('sublocality_level_1')) {
+                                console.log("Balai Desa " + place.name);
+                            } else {}
+                        });
+
+                        window.onload = function() {
+                            var input = document.getElementById('lurah_desa');
+                            var inputValue = input.value;
+
+                            if (!inputValue.includes('Balai Desa')) {
+                                input.value = 'Balai Desa ' + inputValue;
+                            }
                         }
-                    });
-                    newInputBerat.addEventListener('input', updateTotalBerat);
+                    </script>
 
-                    newFormGroup.appendChild(newLabelBerat);
-                    newFormGroup.appendChild(newInputBerat);
+                    <style>
+                        #inputTable {
+                            display: flex;
+                            flex-wrap: wrap;
+                            justify-content: start;
+                            flex-direction: row;
+                            /* Baris baru */
+                        }
 
-                    // Tambahkan input untuk harga pangan
-                    var newLabelHarga = document.createElement('label');
-                    newLabelHarga.textContent = 'Harga per TON:';
-                    var newInputHarga = document.createElement('input');
-                    newInputHarga.type = 'number';
-                    newInputHarga.className = 'form-control';
-                    newInputHarga.name = 'harga_pangan[]';
-                    newInputHarga.placeholder = 'Harga per TON';
-                    newFormGroup.appendChild(newLabelHarga);
-                    newFormGroup.appendChild(newInputHarga);
+                        .form-group {
+                            display: flex;
+                            flex-direction: column;
+                            align-items: start;
+                        }
 
-                    inputTable.appendChild(newFormGroup);
-                    penghitung++;
-                });
+                        #berat_ pangan1 {
+                            padding: 10px;
+                            margin-top: 8px;
+                            bottom: 30%;
+                        }
 
-                document.getElementById('undoInput').addEventListener('click', function () {
-                    var inputTable = document.getElementById('inputTable');
-                    if (inputTable.children.length > 1) {
-                        inputTable.removeChild(inputTable.lastChild);
-                        penghitung--;
+                        .form-control {
+                            width: 100%;
+                        }
+
+                        input::placeholder {
+                            color: rgba(0, 0, 0, 0.5);
+                            /* Change opacity here */
+                        }
+                    </style>
+
+                    <div id="inputTable">
+                        <div class="form-group">
+                            <label for="jenis_pangan1">Jenis Pangan 1:</label>
+                            <input type="text" class="form-control" id="jenis_pangan1" name="jenis_pangan[]" placeholder="">
+                            <label for="berat_pangan1">Berat per (TON):</label>
+                            <input type="number" class="form-control" id="berat_pangan1" name="berat_pangan[]" placeholder="Berat per (TON)">
+                            <label for="harga_pangan1">Harga per TON:</label>
+                            <input type="number" class="form-control" id="harga_pangan1" name="harga_pangan[]" placeholder="Harga per TON">
+                        </div>
+                    </div>
+                    <button type="button" id="tambahInput" class="btn btn-secondary">Tambah</button>
+                    <button type="button" id="undoInput" class="btn btn-secondary">Hapus</button>
+                    <button type="button" id="resetInput" class="btn btn-secondary">Reset</button>
+
+                    <div class="form-group">
+                        <label for="berat">Berat Total (TON):</label>
+                        <input type="number" class="form-control" id="berat" name="berat" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="total_harga">Total Harga Pangan:</label>
+                        <input type="text" class="form-control" id="total_harga" name="total_harga" value="<?php echo 'Rp.' . number_format($totalHarga, 2, ',', '.'); ?>" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="distributor">Distributor:</label>
+                        <input type="text" class="form-control" id="distributor" name="distributor">
+                    </div>
+                    <div class="form-group">
+                        <label for="gps">Set GPS/Lokasi:</label>
+                        <input type="text" class="form-control" id="gps" name="gps" value="<?php echo $gps; ?>" readonly>
+                    </div>
+                    <div id="mapid1" style="height: 500px;"></div>
+                    <br>
+                    <br>
+                    <br>
+                    <button type="reset" class="btn btn-secondary">Batal</button>
+                    <button type="submit" class="btn btn-primary" id="submitBtn"><?php echo $buttonText; ?></button>
+                </form>
+                <script>
+                    function updateTotalBerat() {
+                        var beratPanganInputs = document.querySelectorAll('input[name="berat_pangan[]"]');
+                        var totalBerat = 0;
+                        for (var i = 0; i < beratPanganInputs.length; i++) {
+                            totalBerat += Number(beratPanganInputs[i].value);
+                        }
+                        document.getElementById('berat').value = totalBerat;
                     }
-                });
 
-                document.getElementById('resetInput').addEventListener('click', function () {
-                    var confirmation = confirm("Apakah anda yakin untuk mereset row yang sudah anda buat?");
-                    if (confirmation) {
+                    function formatRupiah(angka) {
+                        var reverse = angka.toString().split('').reverse().join(''),
+                            ribuan = reverse.match(/\d{1,3}/g);
+                        ribuan = ribuan.join('.').split('').reverse().join('');
+                        return 'Rp.' + ribuan + ',00';
+                    }
+
+                    function updateTotalHarga() {
+                        var hargaPanganInputs = document.querySelectorAll('input[name="harga_pangan[]"]');
+                        var beratPanganInputs = document.querySelectorAll('input[name="berat_pangan[]"]');
+                        var totalHarga = 0;
+                        for (var i = 0; i < hargaPanganInputs.length; i++) {
+                            var hargaPerTon = Number(hargaPanganInputs[i].value);
+                            var beratPerTon = Number(beratPanganInputs[i].value);
+                            totalHarga += hargaPerTon * beratPerTon;
+                        }
+                        document.getElementById('total_harga').value = formatRupiah(totalHarga);
+                    }
+
+                    document.querySelectorAll('input[name="harga_pangan[]"], input[name="berat_pangan[]"]').forEach(input => {
+                        input.addEventListener('input', updateTotalHarga);
+                    });
+
+                    document.getElementById('berat_pangan1').addEventListener('input', updateTotalBerat);
+
+                    var penghitung = 2;
+
+                    document.getElementById('tambahInput').addEventListener('click', function() {
                         var inputTable = document.getElementById('inputTable');
-                        while (inputTable.children.length > 1) {
+                        var newFormGroup = document.createElement('div');
+                        newFormGroup.className = 'form-group';
+
+                        var newLabel = document.createElement('label');
+                        newLabel.textContent = 'Jenis Pangan ' + penghitung + ':';
+                        var newInput = document.createElement('input');
+                        newInput.type = 'text';
+                        newInput.className = 'form-control';
+                        newInput.name = 'jenis_pangan[]';
+                        newFormGroup.appendChild(newLabel);
+                        newFormGroup.appendChild(newInput);
+
+                        var newLabelBerat = document.createElement('label');
+                        newLabelBerat.textContent = 'Berat per (TON):';
+                        var newInputBerat = document.createElement('input');
+                        newInputBerat.type = 'number';
+                        newInputBerat.className = 'form-control';
+                        newInputBerat.name = 'berat_pangan[]';
+                        newInputBerat.placeholder = 'Berat per (TON)';
+                        newInputBerat.addEventListener('keypress', function(e) {
+                            var char = String.fromCharCode(e.which);
+                            if (!(/[0-9,]/.test(char))) {
+                                e.preventDefault();
+                            }
+                        });
+                        newInputBerat.addEventListener('input', updateTotalBerat);
+
+                        newFormGroup.appendChild(newLabelBerat);
+                        newFormGroup.appendChild(newInputBerat);
+
+                        // Tambahkan input untuk harga pangan
+                        var newLabelHarga = document.createElement('label');
+                        newLabelHarga.textContent = 'Harga per TON:';
+                        var newInputHarga = document.createElement('input');
+                        newInputHarga.type = 'number';
+                        newInputHarga.className = 'form-control';
+                        newInputHarga.name = 'harga_pangan[]';
+                        newInputHarga.placeholder = 'Harga per TON';
+                        newFormGroup.appendChild(newLabelHarga);
+                        newFormGroup.appendChild(newInputHarga);
+
+                        inputTable.appendChild(newFormGroup);
+                        penghitung++;
+                        newInputHarga.addEventListener('input', updateTotalHarga);
+                        newInputBerat.addEventListener('input', updateTotalHarga);
+                    });
+
+                    document.getElementById('undoInput').addEventListener('click', function() {
+                        var inputTable = document.getElementById('inputTable');
+                        if (inputTable.children.length > 1) {
                             inputTable.removeChild(inputTable.lastChild);
-                        }
-                        penghitung = 2;
-
-                        // Mengambil semua elemen input
-                        var inputs = document.querySelectorAll('input');
-
-                        // Mengatur ulang nilai input
-                        for (var i = 0; i < inputs.length; i++) {
-                            inputs[i].value = '';
-                        }
-                    }
-                });
-
-                var inputs = document.querySelectorAll('input');
-                var submitBtn = document.getElementById('submitBtn');
-
-                function checkInputs() {
-                    for (var i = 0; i < inputs.length; i++) {
-                        if (inputs[i].value === '') {
-                            return false;
-                        }
-                    }
-                    return true;
-                }
-
-                for (var i = 0; i < inputs.length; i++) {
-                    inputs[i].addEventListener('input', function () {
-                        if (checkInputs()) {
-                            submitBtn.style.display = 'inline-block';
-                        } else {
-                            submitBtn.style.display = 'none';
+                            penghitung--;
                         }
                     });
-                }
 
-                // document.getElementById('formPendataan').addEventListener('submit', function (event) {
-                //     if (!checkInputs()) {
-                //         event.preventDefault();
-                //         alert('Harap isi semua kolom input sebelum mengirim.');
-                //     }
-                // });
+                    document.getElementById('resetInput').addEventListener('click', function() {
+                        var confirmation = confirm("Apakah anda yakin untuk mereset row yang sudah anda buat?");
+                        if (confirmation) {
+                            var inputTable = document.getElementById('inputTable');
+                            while (inputTable.children.length > 1) {
+                                inputTable.removeChild(inputTable.lastChild);
+                            }
+                            penghitung = 2;
 
-            </script>
+                            // Mengambil semua elemen input
+                            var inputs = document.querySelectorAll('input');
+
+                            // Mengatur ulang nilai input
+                            for (var i = 0; i < inputs.length; i++) {
+                                inputs[i].value = '';
+                            }
+                        }
+                    });
+
+                    var inputs = document.querySelectorAll('input');
+                    var submitBtn = document.getElementById('submitBtn');
+
+                    function checkInputs() {
+                        for (var i = 0; i < inputs.length; i++) {
+                            if (inputs[i].value === '') {
+                                return false;
+                            }
+                        }
+                        return true;
+                    }
+
+                    for (var i = 0; i < inputs.length; i++) {
+                        inputs[i].addEventListener('input', function() {
+                            if (checkInputs()) {
+                                submitBtn.style.display = 'inline-block';
+                            } else {
+                                submitBtn.style.display = 'none';
+                            }
+                        });
+                    }
+
+                    // document.getElementById('formPendataan').addEventListener('submit', function (event) {
+                    //     if (!checkInputs()) {
+                    //         event.preventDefault();
+                    //         alert('Harap isi semua kolom input sebelum mengirim.');
+                    //     }
+                    // });
+                </script>
+            </div>
+            <div class="tab-pane fade" id="permintaan" role="tabpanel" aria-labelledby="permintaan-tab">
+                <?php include 'permintaan.php'; ?>
+            </div>
+            <!-- Your content for this tab goes here -->
         </div>
-        <div class="tab-pane fade" id="permintaan" role="tabpanel" aria-labelledby="permintaan-tab">
-            <?php include 'permintaan.php'; ?>
-        </div>
-        <!-- Your content for this tab goes here -->
     </div>
-</div>
-</div>
+    </div>
 </body>
+
 </html>
 
 
@@ -359,7 +399,7 @@ if ($result->num_rows > 0) {
         defaultMarkGeocode: false
     }).addTo(map1);
 
-    geocoder.on('markgeocode', function (e) {
+    geocoder.on('markgeocode', function(e) {
         // Set the map view to the result location without adding a marker
         map1.setView(e.geocode.center);
     });
@@ -367,9 +407,9 @@ if ($result->num_rows > 0) {
     // Ensure the map is fully visible
     map1.invalidateSize();
 
-    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
         if (e.target.hash == '#pendataan2') {
-            setTimeout(function () {
+            setTimeout(function() {
                 var map2 = L.map('mapid2').setView([-34.397, 150.644], 13);
 
                 // Add the tile layer to the map
@@ -381,7 +421,7 @@ if ($result->num_rows > 0) {
                 var marker2;
 
                 // Add a click event to the map
-                map2.on('click', function (e) {
+                map2.on('click', function(e) {
                     // If a marker already exists, remove it
                     if (marker2) {
                         map2.removeLayer(marker2);
@@ -405,7 +445,7 @@ if ($result->num_rows > 0) {
                     defaultMarkGeocode: false
                 }).addTo(map2);
 
-                geocoder2.on('markgeocode', function (e) {
+                geocoder2.on('markgeocode', function(e) {
                     // Set the map view to the result location without adding a marker
                     map2.setView(e.geocode.center);
                 });
