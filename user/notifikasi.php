@@ -9,15 +9,15 @@ if (!isset($_SESSION['email'])) {
 
 $email = $_SESSION['email'];
 
-$sql = "SELECT * FROM pengajuanrequest WHERE email_balaidesa_tujuan = ?";
+$sql = "SELECT * FROM pengajuanrequest WHERE email_tujuan = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("s", $email);
 if ($stmt->execute()) {
     $result = $stmt->get_result();
 } else {
-    die("Error executing the query: " . $stmt->error);
+    die("Error executing    the query: " . $stmt->error);
 }
-// rest of your code
+// rest of my code
 ?>
 
 <style>
@@ -234,88 +234,102 @@ if ($stmt->execute()) {
 
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Notifikasi</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
+
 <body>
-<div class="container">
-    <div class="row">
-        <div class="col-md-offset-1 col-md-10">
-            <div class="panel">
-                <div class="panel-heading">
-                    <div class="row">
-                        <div class="landscape-content">
-                            <div class="col col-sm-3 col-xs-12">
-                                <h4 class="title">Notifikasi</h4>
-                            </div>
-                            <div class="col-sm-9 col-xs-12 text-right">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-offset-1 col-md-10">
+                <div class="panel">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="landscape-content">
+                                <div class="col col-sm-3 col-xs-12">
+                                    <h4 class="title">Notifikasi</h4>
+                                </div>
+                                <div class="col-sm-9 col-xs-12 text-right">
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="panel-body table-responsive">
-                    <table class="table">
-                        <thead>
-                        <tr>
-                            <th>Desa Anda</th>
-                            <th>Distributor</th>
-                            <th>Nama Lengkap</th>
-                            <th>No Handphone</th>
-                            <th>Alamat</th>
-                            <th>GPS</th>
-                            <th>Email</th>
-                            <th>Tujuan</th>
-                            <th>Pangan</th>
-                            <th>Action</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <?php while ($row = $result->fetch_assoc()): ?>
-                            <tr>
-                                <td><?php echo $row['lurah_desa']; ?></td>
-                                <td><?php echo $row['distributor']; ?></td>
-                                <td class="nama-lengkap"><?php echo $row['nama_lengkap']; ?></td>
-                                <td><?php echo $row['no_handphone']; ?></td>
-                                <td><?php echo $row['alamat']; ?></td>
-                                <td>
-                                    <?php
-                                    $gps_coordinates = $row['gps'];
-                                    $google_maps_url = "https://www.google.com/maps/search/?api=1&query=" . urlencode($gps_coordinates);
-                                    ?>
-                                    <a href="javascript:void(0);"
-                                       onclick="window.open('<?php echo $google_maps_url; ?>', '_blank')"
-                                       style="color: white;">Buka
-                                        di Google Maps</a>
-                                </td>
-                                <td><?php echo $row['email']; ?></td>
-                                <td><?php echo $row['balai_desa']; ?></td>
-                                <td>
-                                    <?php
-                                    $jenis_pangan_array = explode(", ", $row['jenis_pangan']);
-                                    $berat_pangan_array = explode(", ", $row['berat_pangan']);
-                                    $combined_array = array();
-                                    for ($i = 0; $i < count($jenis_pangan_array); $i++) {
-                                        $combined_array[] = ($i + 1) . '. ' . $jenis_pangan_array[$i] . ' ' . $berat_pangan_array[$i] . 'ton';
-                                    }
-                                    echo implode("<br>", $combined_array);
-                                    ?>
-                                </td>
-                                <td>
-                                    <ul class="action-list">
-                                        <li><a href="#" data-tip="Setuju"><i class="fa fa-check"></i></a></li>
-                                        <li><a href="#" data-tip="Tolak"><i class="fa fa-trash"></i></a></li>
-                                    </ul>
-                                </td>
-                            </tr>
-                        <?php endwhile; ?>
-                        </tbody>
-                    </table>
+                    <div class="panel-body table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Desa Anda</th>
+                                    <th>Distributor</th> 
+                                    <th>Nama Lengkap</th>
+                                    <th>No Handphone</th>
+                                    <th>Alamat</th>
+                                    <th>GPS</th>
+                                    <th>Email</th>
+                                    <th>Tujuan</th>
+                                    <th>Pangan</th>
+                                    <th>Harga Satuan</th> <!-- Kolom baru -->
+                                    <th>Total Harga</th> <!-- Kolom baru -->
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php while ($row = $result->fetch_assoc()) : ?>
+                                    <tr>
+                                        <td><?php echo $row['lurah_desa']; ?></td>
+                                        <td><?php echo $row['distributor']; ?></td>
+                                        <td><?php echo $row['nama_lengkap']; ?></td>
+                                        <td><?php echo $row['no_handphone']; ?></td>
+                                        <td><?php echo $row['alamat']; ?></td>
+                                        <td>
+                                            <a href="javascript:void(0);" onclick="window.open('https://www.google.com/maps/search/?api=1&query=<?php echo urlencode($row['gps']); ?>', '_blank')" style="color: white;">Buka di Google Maps</a>
+                                        </td>
+                                        <td><?php echo $row['email_pengaju']; ?></td>
+                                        <td><?php echo $row['balai_desa']; ?></td>
+                                        <td>
+                                            <?php
+                                            $jenis_pangan_array = explode(", ", $row['jenis_pangan']);
+                                            $berat_pangan_array = explode(", ", $row['berat_pangan']);
+                                            $combined_array = array();
+                                            for ($i = 0; $i < count($jenis_pangan_array); $i++) {
+                                                $combined_array[] = ($i + 1) . '. ' . $jenis_pangan_array[$i] . ' ' . $berat_pangan_array[$i] . ' ton';
+                                            }
+                                            echo implode("<br>", $combined_array);
+                                            ?>
+                                        </td>
+                                        <td>
+                                            <?php
+                                            $hargaSatuanArray = explode(', ', $row['harga_satuan']);
+                                            echo "<ol>";
+                                            foreach ($hargaSatuanArray as $harga) {
+                                                echo "<li>" . htmlspecialchars($harga) . "</li>";
+                                            }
+                                            echo "</ol>";
+                                            ?>
+                                        </td>
+                                        <td>
+                                            <?php
+                                            $totalHargaFormatted = number_format($row['total_harga'], 0, '', ',');
+                                            echo "Rp.    " . $totalHargaFormatted;
+                                            ?>
+                                        </td>
+                                        <td>
+                                            <ul class="action-list">
+                                                <li><a href="proses_persetujuan.php?id=<?php echo $row['id']; ?>" data-tip="Setuju"><i class="fa fa-check"></i></a></li>
+                                                <li><a href="#" data-tip="Tolak"><i class="fa fa-trash"></i></a></li>
+                                            </ul>
+                                        </td>
+                                    </tr>
+                                <?php endwhile; ?>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 </body>
+
 </html>

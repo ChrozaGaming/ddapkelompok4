@@ -1,58 +1,63 @@
 <?php
+
+session_start();
+
 include '../db/configdb.php';
 
-$conn = new mysqli($servername, $username, $password, $dbname); // Define the $conn variable
-
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+if ($conn === null) {
+    die("Connection failed: Unable to connect to the database");
 }
 
-session_start(); // Start the session
+// Mengambil data dari POST
+$email_pengaju = $_SESSION['email'];
+$email_tujuan = $_POST['email_tujuan'] ?? '';
+$lurah_desa = $_POST['lurah_desa'] ?? '';
+$gps = $_POST['gps'] ?? '';
+$distributor = $_POST['distributor'] ?? '';
+$nama_lengkap = $_POST['nama_lengkap'] ?? '';
+$no_handphone = $_POST['no_handphone'] ?? '';
+$alamat = $_POST['alamat'] ?? '';
+$balai_desa = $_POST['balai_desa'] ?? '';
+$jenis_pangan = isset($_POST['jenis_pangan']) ? implode(', ', $_POST['jenis_pangan']) : '';
+$berat_pangan = $_POST['berat_pangan'] ?? [];
+$harga_satuan = $_POST['harga_satuan'] ?? [];
+$total_harga = $_POST['total_harga'] ?? 0;
+$subtotals = $_POST['subtotal'] ?? [];
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $lurah_desa = $_POST['lurah_desa'];
-    $distributor = $_POST['distributor'];
-    $nama_lengkap = $_POST['nama_lengkap'];
-    $no_handphone = $_POST['no_handphone'];
-    $alamat = $_POST['alamat'];
-    $gps = $_POST['gps'];
-    $email = $_POST['email'];
-    $balai_desa = $_POST['balai_desa'];
-    $jenis_pangan_array = $_POST['jenis_pangan'];
-    $berat_pangan_array = $_POST['berat_pangan'];
+// Menyimpan hasil implode ke dalam variabel
+$berat_pangan_imploded = implode(', ', $berat_pangan);
+$harga_satuan_imploded = implode(', ', $harga_satuan);
+$subtotal_imploded = implode(', ', $subtotals);
 
-    $jenis_pangan = implode(", ", $jenis_pangan_array);
-    $berat_pangan = implode(", ", $berat_pangan_array);
-
-    // Fetch the email from the balai_desa table
-    $sql = "SELECT email FROM balai_desa WHERE id = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $balai_desa);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    if ($result->num_rows > 0) {
-        $row = $result->fetch_assoc();
-        $email_balaidesa_tujuan = $row['email'];
-    } else {
-        // Handle the case where the SQL query does not return any results
-        // For example, you can set a default value to the email_balaidesa_tujuan
-        $email_balaidesa_tujuan = "default_email@example.com";
-    }
-
-    // Check if the $_POST['email_balaidesa_tujuan'] is set and is not null
-    if (isset($_POST['email_balaidesa_tujuan']) && !empty($_POST['email_balaidesa_tujuan'])) {
-        $email_balaidesa_tujuan = $_POST['email_balaidesa_tujuan'];
-    }
-
-    // Modify the INSERT statement to include the email_balaidesa_tujuan column
-    $sql = "INSERT INTO pengajuanrequest (lurah_desa, distributor, nama_lengkap, no_handphone, alamat, gps, email, balai_desa, jenis_pangan, berat_pangan, email_balaidesa_tujuan) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("sssssssssss", $lurah_desa, $distributor, $nama_lengkap, $no_handphone, $alamat, $gps, $email, $balai_desa, $jenis_pangan, $berat_pangan, $email_balaidesa_tujuan);
-    $stmt->execute();
-
-    $conn->close();
-
-    header('Location: permintaan.php'); // Redirect back to the form page
-    exit;
+// Query untuk menyimpan data
+$sql = "INSERT INTO pengajuanrequest (email_pengaju, email_tujuan, lurah_desa, gps, distributor, nama_lengkap, no_handphone, alamat, balai_desa, jenis_pangan, berat_pangan, harga_satuan, total_harga, subtotals) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+$stmt = $conn->prepare($sql);
+if (!$stmt) {
+    die('MySQL prepare error: ' . $conn->error);
 }
-?>
+
+$total_harga = 0;
+if (!empty($berat_pangan) && !empty($harga_satuan)) {
+    foreach ($berat_pangan as $jenis => $berat) {
+        if (isset($harga_satuan[$jenis])) {
+            $harga = $harga_satuan[$jenis];
+            $subtotal = $berat * $harga;
+            $subtotals[$jenis] = $subtotal;
+            $total_harga += $subtotal;  // Menambahkan subtotal ke total_harga
+        }
+    }
+}
+$subtotal_imploded = implode(', ', $subtotals);
+
+$stmt->bind_param("ssssssssssssss", $email_pengaju, $email_tujuan, $lurah_desa, $gps, $distributor, $nama_lengkap, $no_handphone, $alamat, $balai_desa, $jenis_pangan, $berat_pangan_imploded, $harga_satuan_imploded, $total_harga, $subtotal_imploded);
+$stmt->execute();
+
+
+if ($stmt->affected_rows === 1) {
+    echo "Pengajuan berhasil disimpan.";
+} else {
+    echo "Gagal menyimpan pengajuan.";
+}
+
+$stmt->close();
+$conn->close();

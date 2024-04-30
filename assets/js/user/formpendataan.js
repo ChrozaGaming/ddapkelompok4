@@ -68,10 +68,14 @@ document.getElementById('resetInput').addEventListener('click', function () {
 
         // Mengatur ulang nilai input
         for (var i = 0; i < inputs.length; i++) {
-            inputs[i].value = '';
+            if (!inputs[i].classList.contains('no-reset')) {
+                inputs[i].value = '';
+            }
         }
     }
 });
+
+
 
 var inputs = document.querySelectorAll('input');
 var submitBtn = document.getElementById('submitBtn');

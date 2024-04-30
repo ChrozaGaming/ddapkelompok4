@@ -8,7 +8,7 @@ if (!isset($_SESSION['email'])) {
 }
 
 $email = $_SESSION['email'];
-$sql = "SELECT * FROM pengajuanrequest WHERE email_balaidesa_tujuan = ?";
+$sql = "SELECT * FROM pengajuanrequest WHERE email_tujuan = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("s", $email);
 if ($stmt->execute()) {
@@ -37,6 +37,7 @@ $conn->close();
 
 <!DOCTYPE html>
 <html>
+
 <head>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
@@ -65,113 +66,125 @@ $conn->close();
             padding-top: 140px;
         }
 
+        .navbar-text {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            width: 100%;
+        }
+
+        .notification-group {
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+
         .bell-icon {
-            position: absolute;
-            left: 81%; /* Adjust this value to move the icon left or right */
-            top: 50%; /* Centers the icon vertically */
-            transform: translateY(-50%); /* Ensures the icon is perfectly centered, regardless of its size */
+            font-size: 1.5rem;
         }
 
         .notification-bubble {
             position: absolute;
-            top: 4px;
-            right: 290px;
-            padding: 5px 10px;
-            border-radius: 50%;
+            top: -10px;
+            right: -10px;
             background-color: red;
             color: white;
-            font-size: 10px;
+            border-radius: 50%;
+            padding: 5px 10px;
+            font-size: 0.45rem;
         }
     </style>
 </head>
+
 <body>
-<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
-    <a class="navbar-brand" href="#">User - Dashboard</a>
-    <span class="navbar-text ml-auto">
-<div id="notification-icon" class="notification-group">
-    <i class="fas fa-bell bell-icon"></i> <!-- This is the bell icon -->
-    <span class="notification-bubble"><?php echo $num_notifications; ?></span>
-</div>
-        Selamat datang, <?php echo $namalengkap; ?>
-        <a href="logout" class="ml-3">
-            <i class="fas fa-door-open"></i> Keluar
-        </a>
-    </span>
-</nav>
-
-<div id="notificationTooltip" style="display: none;">
-    <button id="closeTooltip" style="float: right;">
-        <i class="fas fa-times"></i>
-    </button>    <!-- Content of notifikasi.php will be loaded here -->
-</div>
-
-<div id="sidebar">
-    <ul class="nav flex-column">
-        <li class="nav-item">
-            <a class="nav-link" href="pendataan">Pendataan User</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="information">Information</a>
-        </li>
-    </ul>
-</div>
-<div id="content">
-</div>
-
-<!-- Bootstrap modal -->
-<div class="modal fade" id="notificationModal" tabindex="-1" role="dialog" aria-labelledby="notificationModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="notificationModalLabel">Notifications</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+        <a class="navbar-brand" href="#">User - Dashboard</a>
+        <div class="navbar-text ml-auto d-flex align-items-center">
+            <div style="flex-grow: 1; text-align: right;">Selamat datang, <?php echo $namalengkap; ?> &nbsp;</div>
+            <div id="notification-icon" class="notification-group">
+                <i class="fas fa-bell bell-icon"></i>
+                <span class="notification-bubble"><?php echo $num_notifications; ?></span>
             </div>
-            <div class="modal-body">
-                <!-- Content of notifikasi.php will be loaded here -->
+            <a href="logout" class="ml-3">
+                <i class="fas fa-door-open"></i> Keluar
+            </a>
+        </div>
+    </nav>
+
+    <div id="notificationTooltip" style="display: none;">
+        <button id="closeTooltip" style="float: right;">
+            <i class="fas fa-times"></i>
+        </button> <!-- Content of notifikasi.php will be loaded here -->
+    </div>
+
+    <div id="sidebar">
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link" href="pendataan">Pendataan User</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="hasilpengajuan.php">Hasil Pengajuan</a>
+            </li>
+        </ul>
+    </div>
+    <div id="content">
+    </div>
+
+    <!-- Bootstrap modal -->
+    <div class="modal fade" id="notificationModal" tabindex="-1" role="dialog" aria-labelledby="notificationModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="notificationModalLabel">Notifications</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- Content of notifikasi.php will be loaded here -->
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-<script>
-    $(document).ready(function() {
-        // Fungsi untuk memperbarui jumlah notifikasi
-        function updateNotificationCount() {
-            $.get('get_notification_count.php', function(data) {
-                $('.notification-bubble').text(data);
-            });
-        }
-
-        // Panggil fungsi ini setiap 500 milidetik
-        setInterval(updateNotificationCount, 500);
-
-        $('#notification-icon').click(function() {
-            $.get('notifikasi.php', function(data) {
-                $('#notificationTooltip').html(data);
-                $('#notificationTooltip').show();
-                $('#notificationTooltip').tooltip();
-            });
-        });
-
-        // Attach the click event handler to the close button using the on() method
-        $(document).on('click', '#closeTooltip', function() {
-            $('#notificationTooltip').hide();
-        });
-
-        // Hide the tooltip when anywhere else on the page is clicked
-        $(document).click(function(event) {
-            if (!$(event.target).closest('#notification-icon').length && !$(event.target).is('#closeTooltip')) {
-                $('#notificationTooltip').hide();
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Fungsi untuk memperbarui jumlah notifikasi
+            function updateNotificationCount() {
+                $.get('get_notification_count.php', function(data) {
+                    $('.notification-bubble').text(data);
+                });
             }
+
+            // Panggil fungsi ini setiap 500 milidetik
+            setInterval(updateNotificationCount, 500);
+
+            $('#notification-icon').click(function() {
+                $.get('notifikasi.php', function(data) {
+                    $('#notificationTooltip').html(data);
+                    $('#notificationTooltip').show();
+                    $('#notificationTooltip').tooltip();
+                });
+            });
+
+            // Attach the click event handler to the close button using the on() method
+            $(document).on('click', '#closeTooltip', function() {
+                $('#notificationTooltip').hide();
+            });
+
+            // Hide the tooltip when anywhere else on the page is clicked
+            $(document).click(function(event) {
+                if (!$(event.target).closest('#notification-icon').length && !$(event.target).is('#closeTooltip')) {
+                    $('#notificationTooltip').hide();
+                }
+            });
         });
-    });
-</script>
+    </script>
 
 </body>
+
 </html>
