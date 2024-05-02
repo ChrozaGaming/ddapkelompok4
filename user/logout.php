@@ -1,11 +1,11 @@
 <?php
 session_start();
 
-// Unset all of the session variables
+// Hapus semua variabel sesi
 $_SESSION = array();
 
-// If it's desired to kill the session, also delete the session cookie.
-// Note: This will destroy the session, and not just the session data!
+// Jika ingin mengakhiri sesi, hapus juga cookie sesi.
+// Note: Ini akan merusak sesi, dan bukan hanya data sesi!
 if (ini_get("session.use_cookies")) {
     $params = session_get_cookie_params();
     setcookie(session_name(), '', time() - 42000,
@@ -14,10 +14,9 @@ if (ini_get("session.use_cookies")) {
     );
 }
 
-// Finally, destroy the session.
+// Finally, hapus segala sesi
 session_destroy();
 
-// Redirect to the login page
+// Mengarahkan ke halaman login
 header("Location: login");
 exit;
-?>

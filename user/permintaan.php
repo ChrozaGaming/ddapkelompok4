@@ -21,6 +21,8 @@ if (is_array($jenis_pangan) && array_key_exists($i, $jenis_pangan)) {
     $element = null;
 }
 
+
+
 $sql = "SELECT gps FROM users WHERE email = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("s", $email);
@@ -29,7 +31,7 @@ $result = $stmt->get_result();
 $user = $result->fetch_assoc();
 $user_gps = explode(",", $user['gps']);
 
-$sql = "SELECT id, lurah_desa, jenis_pangan, berat_pangan, berat, distributor, gps, email,
+$sql = "SELECT id, lurah_desa, jenis_pangan, berat_pangan, harga_satuan, berat, distributor, gps, email,
         ( 6371 * acos( cos( radians(?) ) * cos( radians( SUBSTRING_INDEX(gps, ',', 1) ) ) * cos( radians( SUBSTRING_INDEX(gps, ',', -1) ) - radians(?) ) + sin( radians(?) ) * sin(radians( SUBSTRING_INDEX(gps, ',', 1) )) ) ) AS distance
         FROM pendataan
         WHERE email != ?
@@ -127,6 +129,7 @@ $result = $stmt->get_result();
                         <?php
                         $jenis_pangan = explode(',', $row["jenis_pangan"]);
                         $berat_pangan = explode(',', $row["berat_pangan"]);
+                        $harga_satuan_array = explode(',', $row["harga_satuan"]);
                         $jenis_pangan_counter = 1;
                         for ($i = 0; $i < count($jenis_pangan); $i++) :
                             if ($berat_pangan[$i] != '0') :
@@ -148,11 +151,12 @@ $result = $stmt->get_result();
                                         echo '</style>';
 
                                         echo '<table class="inner-table">';
-                                        echo '<tr><th>ID</th><th>Jenis Pangan</th><th>Berat Pangan</th></tr>';
+                                        echo '<tr><th>ID</th><th>Jenis Pangan</th><th>Berat Pangan</th><th>Harga Satuan TON</th></tr>';
                                         echo '<tr>';
                                         echo '<td>' . $jenis_pangan_counter . '</td>';
                                         echo '<td>' . $jenis_pangan[$i] . '</td>';
-                                        echo '<td>' . $berat_pangan[$i] . ' ton' . '</td>';
+                                        echo '<td>' . $berat_pangan[$i] . ' TON' . '</td>';
+                                        echo '<td>' . (isset($harga_satuan_array[$i]) ? 'Rp ' . number_format($harga_satuan_array[$i], 2, ',', '.') : 'Tidak tersedia') . '</td>';
                                         echo '</tr>';
                                         echo '</table>';
                                         ?>

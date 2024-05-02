@@ -106,7 +106,7 @@ $conn->close();
         <form action="submit_pengajuan.php" method="post">
             <div class="form-group">
                 <label for="lurah_desa">Balai Desa:</label>
-                <input type="text" id="lurah_desa" name="text" id="lurah_desa" name="lurah_desa" class="form-control" value="<?php echo htmlspecialchars($data['lurah_desa']); ?>" readonly>
+                <input type="text" id="lurah_desa" name="lurah_desa" class="form-control" value="<?php echo htmlspecialchars($data['lurah_desa']); ?>" readonly>
             </div>
 
             <div class="form-group">
@@ -177,3 +177,20 @@ $conn->close();
 </body>
 
 </html>
+
+
+
+<script>
+    // Kode yang memastikan bahwa form tidak dapat disubmit jika total harga masih Rp 0
+    document.addEventListener('DOMContentLoaded', function() {
+        var form = document.querySelector('form'); // Pastikan selector ini benar
+        form.addEventListener('submit', function(event) {
+            var totalHarga = document.getElementById('total_harga').value;
+            console.log(totalHarga); // Debugging untuk melihat nilai yang diambil
+            if (totalHarga.trim() === 'Rp 0') { // Menambahkan .trim() untuk menghilangkan whitespace yang mungkin ada
+                event.preventDefault(); // Mencegah form dari disubmit
+                alert('Anda tidak boleh mensubmit form yang belum sepenuhnya terisi');
+            }
+        });
+    });
+</script>

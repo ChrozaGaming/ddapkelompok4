@@ -8,6 +8,30 @@ if (!isset($_SESSION['email'])) {
 }
 
 $email = $_SESSION['email'];
+echo "Logged in email: " . $email; // Debugging untuk menampilkan email yang login
+
+// Query untuk mendapatkan data pendataan berdasarkan email
+$sql = "SELECT * FROM pendataan WHERE email = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("s", $email);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result->num_rows > 0) {
+    echo "<div id='content'>";
+    echo "<h2>Data Pendataan di Desa Anda!</h2>";
+    echo "<table class='table table-bordered'>";
+    echo "<thead><tr><th>ID</th><th>Lurah Desa</th><th>Jenis Pangan</th><th>Berat Pangan</th><th>Berat</th><th>Distributor</th><th>GPS</th><th>Email</th><th>Harga Pangan</th><th>Total Harga</th><th>Harga Satuan</th></tr></thead>";
+    echo "<tbody>";
+    while ($row = $result->fetch_assoc()) {
+        echo "<tr><td>" . $row['id'] . "</td><td>" . htmlspecialchars($row['lurah_desa']) . "</td><td>" . htmlspecialchars($row['jenis_pangan']) . "</td><td>" . htmlspecialchars($row['berat_pangan']) . "</td><td>" . $row['berat'] . "</td><td>" . htmlspecialchars($row['distributor']) . "</td><td>" . htmlspecialchars($row['gps']) . "</td><td>" . htmlspecialchars($row['email']) . "</td><td>" . number_format($row['harga_pangan'], 2) . "</td><td>" . number_format($row['total_harga'], 2) . "</td><td>" . htmlspecialchars($row['harga_satuan']) . "</td></tr>";
+    }
+    echo "</tbody></table></div>";
+} else {
+    echo "<div id='content'><h2>No data found for this email.</h2></div>"; // Menampilkan pesan jika tidak ada data
+}
+
+$email = $_SESSION['email'];
 $sql = "SELECT * FROM pengajuanrequest WHERE email_tujuan = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("s", $email);
@@ -97,19 +121,21 @@ $conn->close();
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
-        <a class="navbar-brand" href="#">User - Dashboard</a>
-        <div class="navbar-text ml-auto d-flex align-items-center">
-            <div style="flex-grow: 1; text-align: right;">Selamat datang, <?php echo $namalengkap; ?> &nbsp;</div>
-            <div id="notification-icon" class="notification-group">
-                <i class="fas fa-bell bell-icon"></i>
-                <span class="notification-bubble"><?php echo $num_notifications; ?></span>
-            </div>
-            <a href="logout" class="ml-3">
-                <i class="fas fa-door-open"></i> Keluar
-            </a>
+<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+    <a class="navbar-brand" href="#">
+    <img src="../assets/img/logo/ThriveTerra_Logo.png" alt="Logo Thrive Terra" style="height: 50px; width: 120px; margin-right: px;">        User - Dashboard
+    </a>
+    <div class="navbar-text ml-auto d-flex align-items-center">
+        <div style="flex-grow: 1; text-align: right;">Selamat datang, <?php echo $namalengkap; ?> &nbsp;</div>
+        <div id="notification-icon" class="notification-group">
+            <i class="fas fa-bell bell-icon"></i>
+            <span class="notification-bubble"><?php echo $num_notifications; ?></span>
         </div>
-    </nav>
+        <a href="logout" class="ml-3">
+            <i class="fas fa-door-open"></i> Keluar
+        </a>
+    </div>
+</nav>
 
     <div id="notificationTooltip" style="display: none;">
         <button id="closeTooltip" style="float: right;">
