@@ -75,6 +75,7 @@ $conn->close();
                 }
             });
             document.getElementById('total_harga').value = 'Rp ' + totalHarga.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+            console.log("Total Harga diupdate: ", document.getElementById('total_harga').value); // Tambahkan log ini
         }
 
         function toggleBeratInput(checkboxElement) {
@@ -167,7 +168,7 @@ $conn->close();
                 <?php endforeach; ?>
             </div>
             <label>Total Harga: </label>
-            <input type="text" id="total_harga" class="form-control" value="Rp 0" readonly>
+            <input type="text" id="total_harga" name="total_harga" class="form-control" value="Rp 0" readonly>
             <br>
             <button type="submit" class="btn btn-primary">Submit Pengajuan</button>
         </form>
@@ -181,15 +182,14 @@ $conn->close();
 
 
 <script>
-    // Kode yang memastikan bahwa form tidak dapat disubmit jika total harga masih Rp 0
-    document.addEventListener('DOMContentLoaded', function() {
-        var form = document.querySelector('form'); // Pastikan selector ini benar
+    document.addEventListener("DOMContentLoaded", function() {
+        var form = document.querySelector('form');
         form.addEventListener('submit', function(event) {
             var totalHarga = document.getElementById('total_harga').value;
-            console.log(totalHarga); // Debugging untuk melihat nilai yang diambil
-            if (totalHarga.trim() === 'Rp 0') { // Menambahkan .trim() untuk menghilangkan whitespace yang mungkin ada
-                event.preventDefault(); // Mencegah form dari disubmit
-                alert('Anda tidak boleh mensubmit form yang belum sepenuhnya terisi');
+            console.log("Total Harga yang dikirim: ", totalHarga); // Debugging untuk melihat nilai yang dikirim
+            if (totalHarga === 'Rp 0') {
+                event.preventDefault(); // Mencegah form dari disubmit jika total harga belum di-set
+                alert('Total harga belum dihitung atau masih nol.');
             }
         });
     });

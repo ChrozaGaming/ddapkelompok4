@@ -6,6 +6,8 @@ if ($conn === null) {
     die("Connection failed: Unable to connect to the database");
 }
 
+echo "Total Harga yang diterima: <br>" . $_POST['total_harga'];
+
 
 $email_pengaju = $_SESSION['email'];
 $email_tujuan = $_POST['email_tujuan'] ?? '';
@@ -19,7 +21,9 @@ $balai_desa = $_POST['balai_desa'] ?? '';
 $jenis_pangan = isset($_POST['jenis_pangan']) ? implode(', ', $_POST['jenis_pangan']) : '';
 $berat_pangan = $_POST['berat_pangan'] ?? [];
 $harga_satuan = $_POST['harga_satuan'] ?? [];
-$total_harga = $_POST['total_harga'] ?? 0;
+$total_harga = $_POST['total_harga'] ?? '0';
+$total_harga = str_replace(['Rp ', ','], '', $total_harga); // Menghapus format mata uang
+$total_harga = floatval($total_harga); // Konversi ke float
 $subtotals = $_POST['subtotal'] ?? [];
 
 $berat_pangan_imploded = implode(', ', $berat_pangan);
@@ -37,7 +41,7 @@ if (!$stmt->execute()) {
     echo "Execute error: " . $stmt->error;
 } else {
     if ($stmt->affected_rows === 1) {
-        echo "Pengajuan berhasil disimpan.";
+        echo "<br>Pengajuan berhasil disimpan.";
     } else {
         echo "Gagal menyimpan pengajuan.";
     }
@@ -45,3 +49,4 @@ if (!$stmt->execute()) {
 
 $stmt->close();
 $conn->close();
+?>

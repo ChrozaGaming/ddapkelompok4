@@ -9,15 +9,21 @@ if (!isset($_SESSION['email'])) {
 
 $email = $_SESSION['email'];
 
+$query = "SELECT * FROM pengajuanrequest WHERE id = ?";
+$stmt = $conn->prepare($query);
+$stmt->bind_param("i", $_SESSION['user_id']); // Menggunakan user_id dari session sebagai $someId
+$stmt->execute();
+$result = $stmt->get_result();
+$row = $result->fetch_assoc();
 
 
-$sql = "SELECT * FROM pengajuanrequest, pendataan WHERE email_tujuan = ?";
+$sql = "SELECT * FROM pengajuanrequest WHERE email_tujuan = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("s", $email);
 if ($stmt->execute()) {
     $result = $stmt->get_result();
 } else {
-    die("Error executing    the query: " . $stmt->error);
+    die("Error executing the query: " . $stmt->error);
 }
 // rest of my code
 ?>
@@ -241,6 +247,7 @@ if ($stmt->execute()) {
     <title>Notifikasi</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body>
@@ -264,7 +271,7 @@ if ($stmt->execute()) {
                             <thead>
                                 <tr>
                                     <th>Desa Anda</th>
-                                    <th>Distributor</th> 
+                                    <th>Distributor</th>
                                     <th>Nama Lengkap</th>
                                     <th>No Handphone</th>
                                     <th>Alamat</th>
@@ -313,14 +320,19 @@ if ($stmt->execute()) {
                                         </td>
                                         <td>
                                             <?php
-                                            $totalHargaFormatted = number_format($row['total_harga'], 0, '', ',');
-                                            echo "Rp.    " . $totalHargaFormatted;
+                                            // Memformat total harga
+                                            if (is_numeric($row['total_harga'])) {
+                                                $totalHargaFormatted = number_format($row['total_harga'], 0, '', ',');
+                                                echo "Rp. " . $totalHargaFormatted;
+                                            } else {
+                                                echo "Data tidak valid";
+                                            }
                                             ?>
                                         </td>
                                         <td>
                                             <ul class="action-list">
                                                 <li><a href="proses_persetujuan.php?id=<?php echo $row['id']; ?>" data-tip="Setuju"><i class="fa fa-check"></i></a></li>
-                                                <li><a href="#" data-tip="Tolak"><i class="fa fa-trash"></i></a></li>
+                                                <li><a href="javascript:void(0);" onclick="promptPenolakan(<?php echo $row['id']; ?>);" data-tip="Tolak"><i class="fa fa-times"></i></a></li>                                                <li><a href="#" data-tip="Tolak"><i the "fa fa-trash"></i></a></li>
                                             </ul>
                                         </td>
                                     </tr>
@@ -335,3 +347,45 @@ if ($stmt->execute()) {
 </body>
 
 </html>
+
+<script>
+function promptPenolakan(id) {
+    Swal.fire({
+        title: 'Masukkan Alasan Penolakan',
+        input: 'text',
+        inputAttributes: {
+            autocapitalize: 'off'
+        },
+        showCancelButton: true,
+        confirmButtonText: 'Kirim',
+        cancelButtonText: 'Batal',
+        showLoaderOnConfirm: true,
+        preConfirm: (alasan) => {
+            if (!alasan) {
+                Swal.showValidationMessage('Alasan harus diisi.');
+            } else {
+                return fetch(`proses_penolakan.php?id=${id}&keterangan=${encodeURIComponent(alasan)}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(response.statusText)
+                        }
+                        return response.json();
+                    })
+                    .catch(error => {
+                        Swal.showValidationMessage(`Request failed: ${error}`);
+                    });
+            }
+        },
+        allowOutsideClick: () => !Swal.isLoading()
+    }).then((result) => {
+        if (result.isConfirmed) {
+            Swal.fire({
+                title: 'Penolakan Terkirim!',
+                icon: 'success'
+            }).then(() => {
+                window.location.reload(); // Reload halaman atau navigasi sesuai kebutuhan
+            });
+        }
+    });
+}
+</script>

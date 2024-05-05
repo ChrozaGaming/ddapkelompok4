@@ -35,11 +35,12 @@ if ($insertStmt->affected_rows === 1) {
     $deleteStmt->execute();
 
     if ($deleteStmt->affected_rows === 1) {
-        // Mengurai berat_pangan yang di-implode dari pengajuanrequest
+        // Mengurai jenis_pangan dan berat_pangan yang di-implode dari pengajuanrequest
+        $jenisPanganPengajuan = explode(',', $rowPengajuan['jenis_pangan']);
         $beratPanganPengajuan = explode(',', $rowPengajuan['berat_pangan']);
 
-        // Mengambil dan mengurai berat_pangan dari tabel pendataan
-        $sqlPendataan = "SELECT berat_pangan FROM pendataan WHERE email = ?";
+        // Mengambil jenis_pangan dan berat_pangan dari tabel pendataan
+        $sqlPendataan = "SELECT jenis_pangan, berat_pangan FROM pendataan WHERE email = ?";
         $stmtPendataan = $conn->prepare($sqlPendataan);
         $stmtPendataan->bind_param("s", $emailDesa);
         $stmtPendataan->execute();
@@ -50,12 +51,16 @@ if ($insertStmt->affected_rows === 1) {
             die("Data pendataan tidak ditemukan.");
         }
 
+        $jenisPanganPendataan = explode(',', $rowPendataan['jenis_pangan']);
         $beratPanganPendataan = explode(',', $rowPendataan['berat_pangan']);
 
-        // Menghitung perbedaan berat
-        $beratPanganBaru = array();
-        foreach ($beratPanganPendataan as $index => $berat) {
-            $beratPanganBaru[] = max(0, $berat - ($beratPanganPengajuan[$index] ?? 0));
+        // Menghitung perbedaan berat berdasarkan jenis_pangan
+        $beratPanganBaru = $beratPanganPendataan;
+        foreach ($jenisPanganPengajuan as $index => $jenis) {
+            $indexPendataan = array_search(trim($jenis), array_map('trim', $jenisPanganPendataan));
+            if ($indexPendataan !== false) {
+                $beratPanganBaru[$indexPendataan] = max(0, $beratPanganPendataan[$indexPendataan] - $beratPanganPengajuan[$index]);
+            }
         }
 
         // Update berat_pangan di tabel pendataan

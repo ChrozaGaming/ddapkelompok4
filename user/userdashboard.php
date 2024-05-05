@@ -21,14 +21,14 @@ if ($result->num_rows > 0) {
     echo "<div id='content'>";
     echo "<h2>Data Pendataan di Desa Anda!</h2>";
     echo "<table class='table table-bordered'>";
-    echo "<thead><tr><th>ID</th><th>Lurah Desa</th><th>Jenis Pangan</th><th>Berat Pangan</th><th>Berat</th><th>Distributor</th><th>GPS</th><th>Email</th><th>Harga Pangan</th><th>Total Harga</th><th>Harga Satuan</th></tr></thead>";
+    echo "<thead><tr><th>ID</th><th>Lurah Desa</th><th>Jenis Pangan</th><th>Berat Pangan</th><th>Berat</th><th>Distributor</th><th>GPS</th><th>Email</th><th>Total Harga</th><th>Harga Satuan</th></tr></thead>";
     echo "<tbody>";
     while ($row = $result->fetch_assoc()) {
-        echo "<tr><td>" . $row['id'] . "</td><td>" . htmlspecialchars($row['lurah_desa']) . "</td><td>" . htmlspecialchars($row['jenis_pangan']) . "</td><td>" . htmlspecialchars($row['berat_pangan']) . "</td><td>" . $row['berat'] . "</td><td>" . htmlspecialchars($row['distributor']) . "</td><td>" . htmlspecialchars($row['gps']) . "</td><td>" . htmlspecialchars($row['email']) . "</td><td>" . number_format($row['harga_pangan'], 2) . "</td><td>" . number_format($row['total_harga'], 2) . "</td><td>" . htmlspecialchars($row['harga_satuan']) . "</td></tr>";
+        echo "<tr><td>" . $row['id'] . "</td><td>" . htmlspecialchars($row['lurah_desa']) . "</td><td>" . htmlspecialchars($row['jenis_pangan']) . "</td><td>" . htmlspecialchars($row['berat_pangan']) . "</td><td>" . $row['berat'] . "</td><td>" . htmlspecialchars($row['distributor']) . "</td><td>" . htmlspecialchars($row['gps']) . "</td><td>" . htmlspecialchars($row['email']) . "</td><td>" . number_format($row['total_harga'], 2) . "</td><td>" . htmlspecialchars($row['harga_satuan']) . "</td></tr>";
     }
     echo "</tbody></table></div>";
 } else {
-    echo "<div id='content'><h2>No data found for this email.</h2></div>"; // Menampilkan pesan jika tidak ada data
+    echo "<div id='content'><h2>Belum ada data di desa anda!</h2></div>"; // Menampilkan pesan jika tidak ada data
 }
 
 $email = $_SESSION['email'];
@@ -149,7 +149,7 @@ $conn->close();
                 <a class="nav-link" href="pendataan">Pendataan User</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="hasilpengajuan.php">Hasil Pengajuan</a>
+                <a class="nav-link" href="hasilpengajuan">Hasil Pengajuan</a>
             </li>
         </ul>
     </div>

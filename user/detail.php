@@ -74,12 +74,20 @@ if (!$row) {
                 <td><?php echo htmlspecialchars($row['balai_desa']); ?></td>
             </tr>
             <tr>
-                <th>Pangan</th>
-                <td><?php echo htmlspecialchars($row['jenis_pangan']); ?></td>
-            </tr>
+                <td>
+                    <?php
+                    $jenis_pangan = explode(',', $row['jenis_pangan']);
+                    $berat_pangan = explode(',', $row['berat_pangan']);
+                    $harga_satuan = explode(',', $row['harga_satuan']);
+                    ?>
+                </td>
             <tr>
-                <th>Harga Satuan</th>
-                <td><?php echo htmlspecialchars($row['harga_satuan']); ?></td>
+                <th>Jenis Pangan</th>
+                <td>
+                    <?php foreach ($jenis_pangan as $index => $jenis) {
+                        echo htmlspecialchars($jenis) . " " . htmlspecialchars($berat_pangan[$index]) . " TON -  Rp " . number_format($harga_satuan[$index], 0, '', ',') . "<br>";
+                    } ?>
+                </td>
             </tr>
             <tr>
                 <th>Total Harga</th>
@@ -105,17 +113,25 @@ if (!$row) {
                 doc.text("Detail Pengajuan", 14, 20);
 
                 // Membuat tabel
-                const headers = [["Kategori", "Informasi"]];
+                const headers = [
+                    ["Kategori", "Informasi"]
+                ];
                 const data = [
                     ["Desa Anda", "<?php echo $row['lurah_desa']; ?>"],
                     ["Distributor", "<?php echo $row['distributor']; ?>"],
                     ["Nama Lengkap", "<?php echo $row['nama_lengkap']; ?>"],
                     ["No Handphone", "<?php echo $row['no_handphone']; ?>"],
                     ["Alamat", "<?php echo $row['alamat']; ?>"],
+                    ["Google Maps", "<?php echo $row['gps']; ?>"],
                     ["Email", "<?php echo $row['email_pengaju']; ?>"],
                     ["Tujuan", "<?php echo $row['balai_desa']; ?>"],
-                    ["Pangan", "<?php echo $row['jenis_pangan']; ?>"],
-                    ["Harga Satuan", "<?php echo $row['harga_satuan']; ?>"],
+                    ["Pangan", `<?php
+                                $output = '';
+                                foreach ($jenis_pangan as $index => $jenis) {
+                                    $output .= htmlspecialchars($jenis) . ' ' . htmlspecialchars($berat_pangan[$index]) . ' TON | Rp ' . number_format($harga_satuan[$index], 0, '', ',') . '\\n';
+                                }
+                                echo trim($output, '\\n');
+                                ?>`],
                     ["Total Harga", "Rp. <?php echo number_format($row['total_harga'], 0, '', ','); ?>"]
                 ];
 
@@ -137,8 +153,12 @@ if (!$row) {
                         fontSize: 14
                     },
                     columnStyles: {
-                        0: {cellWidth: 50},
-                        1: {cellWidth: 180}
+                        0: {
+                            cellWidth: 50
+                        },
+                        1: {
+                            cellWidth: 180
+                        }
                     }
                 });
 

@@ -186,10 +186,9 @@ $stmt->close();
                             <input type="text" class="form-control" id="harga_satuan1" name="harga_satuan[]" placeholder="Harga Satuan (Rp)">
                         </div>
                     </div>
-                    <button type="button" id="tambahInput" class="btn btn-secondary">Tambah</button>
-                    <button type="button" id="undoInput" class="btn btn-secondary">Hapus</button>
-                    <button type="button" id="resetInput" class="btn btn-secondary">Reset</button>
-
+                    <button type="button" id="tambahInput" class="btn btn-success">Tambah</button>
+                    <button type="button" id="undoInput" class="btn btn-warning">Hapus</button>
+                    <button type="button" id="resetInput" class="btn btn-danger">Reset</button>
                     <div class="form-group">
                         <label for="berat">Berat Total (TON):</label>
                         <input type="number" class="form-control" id="berat" name="berat" readonly>

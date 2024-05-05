@@ -12,17 +12,6 @@ if (!isset($_SESSION['email'])) {
 
 $email = $_SESSION['email'];
 
-$jenis_pangan = isset($_POST['jenis_pangan']) ? $_POST['jenis_pangan'] : [];
-$i = 0;
-
-if (is_array($jenis_pangan) && array_key_exists($i, $jenis_pangan)) {
-    $element = $jenis_pangan[$i];
-} else {
-    $element = null;
-}
-
-
-
 $sql = "SELECT gps FROM users WHERE email = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("s", $email);
@@ -39,7 +28,6 @@ $sql = "SELECT id, lurah_desa, jenis_pangan, berat_pangan, harga_satuan, berat, 
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("ddds", $user_gps[0], $user_gps[1], $user_gps[0], $email);
 $stmt->execute();
-
 $result = $stmt->get_result();
 ?>
 
@@ -51,31 +39,28 @@ $result = $stmt->get_result();
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            $('.permintaan-btn').click(function() {
-                var collapseElementId = $(this).attr('data-target');
-                var collapseElement = $(collapseElementId);
-                var button = $(this);
+    <style>
+        tr:nth-child(even) {
+            background-color: #f2f2f2 !important;
+        }
 
-                button.prop('disabled', true);
+        tr:nth-child(odd) {
+            background-color: #ffffff !important;
+        }
 
-                if ($(collapseElement).hasClass('show')) {
-                    button.text('Tampilkan Data');
-                } else {
-                    button.text('Sembunyikan Data');
-                }
+        .inner-table {
+            border: 1px solid black;
+            border-collapse: collapse;
+            border-radius: 10px;
+            overflow: hidden;
+        }
 
-                setTimeout(function() {
-                    $(collapseElement).collapse('toggle');
-                }, 350);
-
-                setTimeout(function() {
-                    button.prop('disabled', false);
-                }, 700);
-            });
-        });
-    </script>
+        .inner-table th,
+        .inner-table td {
+            border: 1px solid black;
+            padding: 10px;
+        }
+    </style>
 </head>
 
 <body>
@@ -137,27 +122,26 @@ $result = $stmt->get_result();
                                 <tr class="collapse" id="collapse<?php echo $counter; ?>">
                                     <td colspan="6">
                                         <?php
-                                        echo '<style>';
-                                        echo '.inner-table {';
-                                        echo '  border: 1px solid black;';
-                                        echo '  border-collapse: collapse;';
-                                        echo '  border-radius: 10px;';
-                                        echo '  overflow: hidden;';
-                                        echo '}';
-                                        echo '.inner-table th, .inner-table td {';
-                                        echo '  border: 1px solid black;';
-                                        echo '  padding: 10px;';
-                                        echo '}';
-                                        echo '</style>';
-
                                         echo '<table class="inner-table">';
                                         echo '<tr><th>ID</th><th>Jenis Pangan</th><th>Berat Pangan</th><th>Harga Satuan TON</th></tr>';
-                                        echo '<tr>';
-                                        echo '<td>' . $jenis_pangan_counter . '</td>';
-                                        echo '<td>' . $jenis_pangan[$i] . '</td>';
-                                        echo '<td>' . $berat_pangan[$i] . ' TON' . '</td>';
-                                        echo '<td>' . (isset($harga_satuan_array[$i]) ? 'Rp ' . number_format($harga_satuan_array[$i], 2, ',', '.') : 'Tidak tersedia') . '</td>';
-                                        echo '</tr>';
+
+                                        $jenis_pangan = explode(',', $row["jenis_pangan"]);
+                                        $berat_pangan = explode(',', $row["berat_pangan"]);
+                                        $harga_satuan_array = explode(',', $row["harga_satuan"]);
+                                        $jenis_pangan_counter = 1;
+
+                                        for ($i = 0; $i < count($jenis_pangan); $i++) :
+                                            if ($berat_pangan[$i] != '0') :
+                                                echo '<tr>';
+                                                echo '<td>' . $jenis_pangan_counter . '</td>';
+                                                echo '<td>' . $jenis_pangan[$i] . '</td>';
+                                                echo '<td>' . $berat_pangan[$i] . ' TON' . '</td>';
+                                                echo '<td>' . (isset($harga_satuan_array[$i]) ? 'Rp ' . number_format($harga_satuan_array[$i], 2, ',', '.') : 'Tidak tersedia') . '</td>';
+                                                echo '</tr>';
+                                                $jenis_pangan_counter++;
+                                            endif;
+                                        endfor;
+
                                         echo '</table>';
                                         ?>
                                     </td>
@@ -176,16 +160,6 @@ $result = $stmt->get_result();
 </body>
 
 </html>
-
-<style>
-    tr:nth-child(even) {
-        background-color: #f2f2f2 !important;
-    }
-
-    tr:nth-child(odd) {
-        background-color: #ffffff !important;
-    }
-</style>
 
 <script>
     $(document).ready(function() {
@@ -211,8 +185,6 @@ $result = $stmt->get_result();
         });
     });
 </script>
-
-
 
 <?php
 $stmt->close();

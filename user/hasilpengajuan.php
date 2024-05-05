@@ -15,7 +15,7 @@ if (isset($_POST['status'])) {
     if ($status == 'Diterima') {
         $query = "SELECT * FROM persetujuan WHERE email_pengaju = ?";
     } else {
-        $query = "SELECT * FROM ditolak WHERE email_pengaju = ?";
+        $query = "SELECT * FROM penolakan WHERE email_pengaju = ?";
     }
 
     $stmt = $conn->prepare($query);
@@ -24,10 +24,22 @@ if (isset($_POST['status'])) {
     $result = $stmt->get_result();
 
     echo "<table class='table'>";
-    echo "<thead><tr><th>ID</th><th>Nama Lengkap</th><th>Status</th><th>Detail</th></tr></thead>";
+    echo "<thead><tr><th>ID</th><th>Nama Lengkap</th><th>Status</th>";
+    if ($status == 'Diterima') {
+        echo "<th>Detail</th>";
+    } else {
+        echo "<th>Keterangan</th>";
+    }
+    echo "</tr></thead>";
     echo "<tbody>";
     while ($row = $result->fetch_assoc()) {
-        echo "<tr><td>" . $row['id'] . "</td><td>" . $row['nama_lengkap'] . "</td><td>" . $status . "</td><td><a href='detail.php?id=" . $row['id'] . "'>Lihat Detail</a></td></tr>";
+        echo "<tr><td>" . $row['id'] . "</td><td>" . $row['nama_lengkap'] . "</td><td>" . $status . "</td>";
+        if ($status == 'Diterima') {
+            echo "<td><a href='detail.php?id=" . $row['id'] . "'>Lihat Detail</a></td>";
+        } else {
+            echo "<td>" . htmlspecialchars($row['keterangan']) . "</td>";
+        }
+        echo "</tr>";
     }
     echo "</tbody></table>";
     exit;
