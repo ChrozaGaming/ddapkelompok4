@@ -14,8 +14,10 @@ if (isset($_POST['status'])) {
     $status = $_POST['status'];
     if ($status == 'Diterima') {
         $query = "SELECT * FROM persetujuan WHERE email_pengaju = ?";
-    } else {
+    } elseif ($status == 'Ditolak') {
         $query = "SELECT * FROM penolakan WHERE email_pengaju = ?";
+    } else {
+        $query = "SELECT * FROM pengajuanrequest WHERE email_pengaju = ?";
     }
 
     $stmt = $conn->prepare($query);
@@ -27,8 +29,10 @@ if (isset($_POST['status'])) {
     echo "<thead><tr><th>ID</th><th>Nama Lengkap</th><th>Status</th>";
     if ($status == 'Diterima') {
         echo "<th>Detail</th>";
-    } else {
+    } elseif ($status == 'Ditolak') {
         echo "<th>Keterangan</th>";
+    } else {
+        echo "<th>Status</th>";
     }
     echo "</tr></thead>";
     echo "<tbody>";
@@ -36,8 +40,10 @@ if (isset($_POST['status'])) {
         echo "<tr><td>" . $row['id'] . "</td><td>" . $row['nama_lengkap'] . "</td><td>" . $status . "</td>";
         if ($status == 'Diterima') {
             echo "<td><a href='detail.php?id=" . $row['id'] . "'>Lihat Detail</a></td>";
-        } else {
+        } elseif ($status == 'Ditolak') {
             echo "<td>" . htmlspecialchars($row['keterangan']) . "</td>";
+        } else {
+            echo "<td>Tunggu</td>";
         }
         echo "</tr>";
     }
@@ -60,6 +66,7 @@ if (isset($_POST['status'])) {
     <select id="statusDropdown" class="form-control">
         <option value="Diterima">Diterima</option>
         <option value="Ditolak">Ditolak</option>
+        <option value="Pending">Pending</option>
     </select>
     <div id="tableContainer"></div>
 </div>
@@ -73,7 +80,7 @@ $(document).ready(function() {
         });
     });
 
-    $('#statusDropdown').trigger('change'); // Trigger change to load initial data
+    $('#statusDropdown').trigger('change'); 
 });
 </script>
 </body>
