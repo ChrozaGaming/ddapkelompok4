@@ -1,14 +1,19 @@
 <?php
+ob_start(); // Start buffering output
 session_start();
+
 include '../db/configdb.php';
 
+header('Content-Type: application/json');
+
 if (!isset($_SESSION['email'])) {
-    header('Location: login.php');
+    echo json_encode(['error' => true, 'message' => 'User not logged in']);
     exit;
 }
 
 if (!isset($_GET['id']) || !isset($_GET['keterangan'])) {
-    die("ID atau alasan tidak diberikan.");
+    echo json_encode(['error' => true, 'message' => 'ID atau alasan tidak diberikan.']);
+    exit;
 }
 
 $id = $_GET['id'];
@@ -28,13 +33,13 @@ if ($moveSuccessful) {
     $stmtDelete = $conn->prepare($sqlDelete);
     $stmtDelete->bind_param("i", $id);
     if ($stmtDelete->execute()) {
-        echo "<script>alert('Pengajuan berhasil ditolak dan dipindahkan.'); window.location.href='userdashboard.php';</script>";
+        echo json_encode(['success' => true, 'message' => 'Pengajuan berhasil ditolak dan dipindahkan.']);
     } else {
-        echo "<script>alert('Gagal menghapus pengajuan.'); window.location.href='userdashboard.php';</script>";
+        echo json_encode(['error' => true, 'message' => 'Gagal menghapus pengajuan.']);
     }
     $stmtDelete->close();
 } else {
-    echo "<script>alert('Gagal memindahkan pengajuan.'); window.location.href='userdashboard.php';</script>";
+    echo json_encode(['error' => true, 'message' => 'Gagal memindahkan pengajuan.']);
 }
 
 $conn->close();

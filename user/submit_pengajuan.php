@@ -41,7 +41,8 @@ if (!$stmt->execute()) {
     echo "Execute error: " . $stmt->error;
 } else {
     if ($stmt->affected_rows === 1) {
-        echo "<br>Pengajuan berhasil disimpan.";
+        header("Location: userdashboard.php");
+        exit;
     } else {
         echo "Gagal menyimpan pengajuan.";
     }

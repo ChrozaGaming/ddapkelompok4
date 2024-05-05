@@ -25,7 +25,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 // Delete the user data from the userrequests table
                 $sql = "DELETE FROM userrequests WHERE email = '$email'";
                 if ($conn->query($sql) === TRUE) {
-                    echo "Data has been moved successfully";
+                    header('Location: login.php');
+                    exit;
                 } else {
                     echo "Error deleting record: " . $conn->error;
                 }
@@ -59,41 +60,48 @@ $conn->close();
 
 <!DOCTYPE html>
 <html>
+
 <head>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <script type="text/javascript" src="https://cdn.rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
-</head>
-<body>
-<div class="container mt-5">
-    <h1 class="text-center font-weight-bold">Waiting List</h1>
-    <video id="preview" style="width: 100%; max-width: 400px; height: auto;"></video>
-    <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
-        <div class="form-group">
-            <label for="license_key">License Key:</label>
-            <input type="text" class="form-control" id="license_key" name="license_key" required>
-        </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
-    </form>
-</div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<script>
-    let scanner = new Instascan.Scanner({ video: document.getElementById('preview') });
-    scanner.addListener('scan', function (content) {
-        document.getElementById('license_key').value = content;
-    });
-    Instascan.Camera.getCameras().then(function (cameras) {
-        if (cameras.length > 0) {
-            scanner.start(cameras[0]).catch(function (e) {
-                console.error('Error starting camera', e);
-            });
-        } else {
-            console.error('No cameras found.');
-        }
-    }).catch(function (e) {
-        console.error('Error getting cameras', e);
-    });
-</script>
+</head>
+
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center font-weight-bold">Waiting List</h1>
+        <video id="preview" style="width: 100%; max-width: 400px; height: auto;"></video>
+        <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
+            <div class="form-group">
+                <label for="license_key">License Key:</label>
+                <input type="text" class="form-control" id="license_key" name="license_key" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+
+    <script>
+        let scanner = new Instascan.Scanner({
+            video: document.getElementById('preview')
+        });
+        scanner.addListener('scan', function(content) {
+            document.getElementById('license_key').value = content;
+        });
+        Instascan.Camera.getCameras().then(function(cameras) {
+            if (cameras.length > 0) {
+                scanner.start(cameras[0]).catch(function(e) {
+                    console.error('Error starting camera', e);
+                });
+            } else {
+                console.error('No cameras found.');
+            }
+        }).catch(function(e) {
+            console.error('Error getting cameras', e);
+        });
+    </script>
 
 
 </body>
+
 </html>

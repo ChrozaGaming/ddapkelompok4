@@ -28,7 +28,18 @@ if ($stmt->execute()) {
 // rest of my code
 ?>
 
-<style>
+
+
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Notifikasi</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
     .demo {
         font-family: 'Noto Sans', sans-serif;
     }
@@ -238,16 +249,6 @@ if ($stmt->execute()) {
         }
     }
 </style>
-
-
-<!DOCTYPE html>
-<html>
-
-<head>
-    <title>Notifikasi</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body>
@@ -337,6 +338,7 @@ if ($stmt->execute()) {
 
 </html>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 <script>
 function promptPenolakan(id) {
     Swal.fire({
@@ -353,16 +355,21 @@ function promptPenolakan(id) {
             if (!alasan) {
                 Swal.showValidationMessage('Alasan harus diisi.');
             } else {
-                return fetch(`proses_penolakan.php?id=${id}&keterangan=${encodeURIComponent(alasan)}`)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error(response.statusText)
-                        }
-                        return response.json();
-                    })
-                    .catch(error => {
-                        Swal.showValidationMessage(`Request failed: ${error}`);
-                    });
+                return fetch(`proses_penolakan.php?id=${id}&keterangan=${encodeURIComponent(alasan)}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(response.statusText);
+                    }
+                    return response.json();
+                })
+                .catch(error => {
+                    Swal.showValidationMessage(`Request failed: ${error}`);
+                });
             }
         },
         allowOutsideClick: () => !Swal.isLoading()
@@ -372,9 +379,10 @@ function promptPenolakan(id) {
                 title: 'Penolakan Terkirim!',
                 icon: 'success'
             }).then(() => {
-                window.location.reload(); // Reload halaman atau navigasi sesuai kebutuhan
+                window.location.reload();
             });
         }
     });
 }
 </script>
+

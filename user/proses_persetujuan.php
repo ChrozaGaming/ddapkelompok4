@@ -71,7 +71,8 @@ if ($insertStmt->affected_rows === 1) {
         $updateStmt->execute();
 
         if ($updateStmt->affected_rows === 1) {
-            echo "Data pendataan berhasil diperbarui.";
+            header('Location: userdashboard.php');
+            exit;
         } else {
             echo "Gagal memperbarui data pendataan.";
         }
@@ -85,3 +86,5 @@ if ($insertStmt->affected_rows === 1) {
 }
 $insertStmt->close();
 $conn->close();
+
+

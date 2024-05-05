@@ -61,6 +61,8 @@ $conn->close();
     <meta charset="UTF-8">
     <title>Pengajuan Jenis Pangan</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script>
         function updateTotalHarga() {
             var totalHarga = 0;

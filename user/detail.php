@@ -63,7 +63,7 @@ if (!$row) {
             </tr>
             <tr>
                 <th>Google Maps</th>
-                <td><a href="https://www.google.com/maps/search/?api=1&query=<?php echo urlencode($row['gps']); ?>" target="_blank">Buka di Google Maps</a></td>
+                <td><a href="https://www.google.com/maps/search/?api=1&query=<?php echo urlencode($row['balai_desa']); ?>" target="_blank">Buka di Google Maps</a></td>
             </tr>
             <tr>
                 <th>Email</th>

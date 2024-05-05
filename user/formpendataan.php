@@ -5,7 +5,8 @@ session_start();
 // Include your database configuration file
 include '../db/configdb.php';
 
-function clean_input($data) {
+function clean_input($data)
+{
     $data = trim($data);
     $data = stripslashes($data);
     $data = htmlspecialchars($data);
@@ -56,10 +57,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($stmt->execute()) {
         if ($exists) {
             // Jika melakukan update, tampilkan pesan bahwa data telah diperbarui
-            echo "<script>alert('Data untuk email $email berhasil diperbarui.');</script>";
+            header("Location: userdashboard.php");
+            exit;
         } else {
             // Jika melakukan insert, tampilkan pesan bahwa data baru telah ditambahkan
-            echo "<script>alert('Data baru untuk email $email berhasil ditambahkan.');</script>";
+            header("Location: userdashboard.php");
+            exit;
         }
     } else {
         echo "Kesalahan: " . $stmt->error;
@@ -68,4 +71,3 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->close();
     $conn->close();
 }
-?>
