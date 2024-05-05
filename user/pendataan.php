@@ -189,10 +189,10 @@ $stmt->close();
                     <button type="button" id="tambahInput" class="btn btn-success">Tambah</button>
                     <button type="button" id="undoInput" class="btn btn-warning">Hapus</button>
                     <button type="button" id="resetInput" class="btn btn-danger">Reset</button>
-                    <div class="form-group">
+                    <!-- <div class="form-group">
                         <label for="berat">Berat Total (TON):</label>
                         <input type="number" class="form-control" id="berat" name="berat" readonly>
-                    </div>
+                    </div> -->
                     <div class="form-group">
                         <label for="total_harga">Total Harga Pangan Saat Ini:</label>
                         <input type="text" class="form-control" id="total_harga_display" name="total_harga_display" value="<?php echo 'Rp. ' . number_format($totalHarga, 2, ',', '.'); ?>" readonly>

@@ -279,7 +279,6 @@ if ($stmt->execute()) {
                                     <th>Email</th>
                                     <th>Tujuan</th>
                                     <th>Pangan</th>
-                                    <th>Harga Satuan</th> <!-- Kolom baru -->
                                     <th>Total Harga</th> <!-- Kolom baru -->
                                     <th>Action</th>
                                 </tr>
@@ -306,16 +305,6 @@ if ($stmt->execute()) {
                                                 $combined_array[] = ($i + 1) . '. ' . $jenis_pangan_array[$i] . ' ' . $berat_pangan_array[$i] . ' ton';
                                             }
                                             echo implode("<br>", $combined_array);
-                                            ?>
-                                        </td>
-                                        <td>
-                                            <?php
-                                            $hargaSatuanArray = explode(', ', $row['harga_satuan']);
-                                            echo "<ol>";
-                                            foreach ($hargaSatuanArray as $harga) {
-                                                echo "<li>" . htmlspecialchars($harga) . "</li>";
-                                            }
-                                            echo "</ol>";
                                             ?>
                                         </td>
                                         <td>

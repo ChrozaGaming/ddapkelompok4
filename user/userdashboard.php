@@ -8,7 +8,37 @@ if (!isset($_SESSION['email'])) {
 }
 
 $email = $_SESSION['email'];
-echo "Logged in email: " . $email; // Debugging untuk menampilkan email yang login
+
+// Query untuk mendapatkan nama lengkap dari tabel users
+$sqlUser = "SELECT namalengkap FROM users WHERE email = ?";
+$stmtUser = $conn->prepare($sqlUser);
+$stmtUser->bind_param("s", $email);
+$stmtUser->execute();
+$resultUser = $stmtUser->get_result();
+$user = $resultUser->fetch_assoc();
+
+if ($user) {
+    $namalengkap = $user['namalengkap'];
+} else {
+    $namalengkap = "Nama Tidak Ditemukan"; // Atau penanganan lain sesuai kebutuhan
+}
+
+// Query untuk mendapatkan data persetujuan berdasarkan email_pengaju
+$sqlApproval = "SELECT * FROM persetujuan WHERE email_desa = ?";
+$stmtApproval = $conn->prepare($sqlApproval);
+$stmtApproval->bind_param("s", $email);
+$stmtApproval->execute();
+$resultApproval = $stmtApproval->get_result();
+
+// Query untuk mendapatkan jumlah notifikasi dari tabel pengajuanrequest
+$sqlNotifications = "SELECT COUNT(*) AS num_notifications FROM pengajuanrequest WHERE email_tujuan = ?";
+$stmtNotifications = $conn->prepare($sqlNotifications);
+$stmtNotifications->bind_param("s", $email);
+$stmtNotifications->execute();
+$resultNotifications = $stmtNotifications->get_result();
+$rowNotifications = $resultNotifications->fetch_assoc();
+
+$num_notifications = $rowNotifications ? $rowNotifications['num_notifications'] : 0;
 
 // Query untuk mendapatkan data pendataan berdasarkan email
 $sql = "SELECT * FROM pendataan WHERE email = ?";
@@ -21,40 +51,67 @@ if ($result->num_rows > 0) {
     echo "<div id='content'>";
     echo "<h2>Data Pendataan di Desa Anda!</h2>";
     echo "<table class='table table-bordered'>";
-    echo "<thead><tr><th>ID</th><th>Lurah Desa</th><th>Jenis Pangan</th><th>Berat Pangan</th><th>Berat</th><th>Distributor</th><th>GPS</th><th>Email</th><th>Total Harga</th><th>Harga Satuan</th></tr></thead>";
+    echo "<thead><tr><th>ID</th><th>Lurah Desa</th><th>Jenis Pangan</th><th>Distributor</th><th>GPS</th><th>Email Desa Anda</th><th>Total Harga</th></tr></thead>";
     echo "<tbody>";
     while ($row = $result->fetch_assoc()) {
-        echo "<tr><td>" . $row['id'] . "</td><td>" . htmlspecialchars($row['lurah_desa']) . "</td><td>" . htmlspecialchars($row['jenis_pangan']) . "</td><td>" . htmlspecialchars($row['berat_pangan']) . "</td><td>" . $row['berat'] . "</td><td>" . htmlspecialchars($row['distributor']) . "</td><td>" . htmlspecialchars($row['gps']) . "</td><td>" . htmlspecialchars($row['email']) . "</td><td>" . number_format($row['total_harga'], 2) . "</td><td>" . htmlspecialchars($row['harga_satuan']) . "</td></tr>";
+        echo "<tr>";
+        echo "<td>" . $row['id'] . "</td>";
+        echo "<td>" . htmlspecialchars($row['lurah_desa']) . "</td>";
+        echo "<td>";
+        $jenis_pangan = explode(',', $row['jenis_pangan']);
+        $berat_pangan = explode(',', $row['berat_pangan']);
+        $harga_satuan = explode(',', $row['harga_satuan']);
+        foreach ($jenis_pangan as $index => $jenis) {
+            echo htmlspecialchars($jenis) . " " . htmlspecialchars($berat_pangan[$index]) . " TON - Rp " . number_format($harga_satuan[$index], 0, '', ',') . "<br>";
+        }
+        echo "</td>";
+        echo "<td>" . htmlspecialchars($row['distributor']) . "</td>";
+        echo "<td><a href='https://www.google.com/maps/search/?api=1&query=" . urlencode($row['gps']) . "' target='_blank'>Buka di Google Maps</a></td>";
+        echo "<td>" . htmlspecialchars($row['email']) . "</td>";
+        echo "<td>" . number_format((float)$row['total_harga'], 0, '', ',') . "</td>";
+        echo "</tr>";
     }
-    echo "</tbody></table></div>";
+    echo "</tbody>";
+    echo "</table>";
+    echo "</div>";
 } else {
-    echo "<div id='content'><h2>Belum ada data di desa anda!</h2></div>"; // Menampilkan pesan jika tidak ada data
+    echo "<div id='content'><h2>Belum ada data di desa anda!</h2></div>";
 }
 
-$email = $_SESSION['email'];
-$sql = "SELECT * FROM pengajuanrequest WHERE email_tujuan = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("s", $email);
-if ($stmt->execute()) {
-    $result = $stmt->get_result();
+if ($resultApproval->num_rows > 0) {
+    echo "<div id='content'>";
+    echo "<h2>Data Persetujuan Pengiriman</h2>";
+    echo "<table class='table table-bordered'>";
+    echo "<thead><tr><th>ID</th><th>Lurah Desa</th><th>Jenis Pangan</th><th>Distributor</th><th>GPS</th><th>Email Pengaju</th><th>Total Harga</th><th>Actions</th></tr></thead>";
+    echo "<tbody>";
+    while ($rowApproval = $resultApproval->fetch_assoc()) {
+        echo "<tr>";
+        echo "<td>" . $rowApproval['id'] . "</td>";
+        echo "<td>" . htmlspecialchars($rowApproval['balai_desa']) . "</td>";
+        echo "<td>";
+        $jenis_pangan = explode(',', $rowApproval['jenis_pangan']);
+        $berat_pangan = explode(',', $rowApproval['berat_pangan']);
+        $harga_satuan = explode(',', $rowApproval['harga_satuan']);
+        foreach ($jenis_pangan as $index => $jenis) {
+            echo htmlspecialchars($jenis) . " " . htmlspecialchars($berat_pangan[$index]) . " TON - Rp " . number_format($harga_satuan[$index], 0, '', ',') . "<br>";
+        }
+        echo "</td>";
+        // echo "<td>" . htmlspecialchars($rowApproval['berat_pangan']) . "</td>";
+        echo "<td>" . htmlspecialchars($rowApproval['distributor']) . "</td>";
+        echo "<td><a href='https://www.google.com/maps/search/?api=1&query=" . urlencode(htmlspecialchars($rowApproval['balai_desa'])) . "' target='_blank'>Buka di Google Maps</a></td>";
+        echo "<td>" . htmlspecialchars($rowApproval['email_pengaju']) . "</td>";
+        echo "<td>" . number_format($rowApproval['total_harga'], 2) . "</td>";
+        echo "<td><a href='print_action.php?id=" . $rowApproval['id'] . "'><i class='fas fa-print'></i></a> <a href='checklist_action.php?id=" . $rowApproval['id'] . "' style='color: green;'><i class='fas fa-check'></i></a></td>";
+        echo "</tr>";
+    }
+    echo "</tbody></table>";
+    echo "</div>";
 } else {
-    die("Error executing the query: " . $stmt->error);
+    echo "<div id='content'><h2>Belum ada data persetujuan.</h2></div>"; // Menampilkan pesan jika tidak ada data persetujuan
 }
 
-$num_notifications = mysqli_num_rows($result);
 
-$email = $_SESSION['email'];
-$sql = "SELECT namalengkap, gps FROM users WHERE email = '$email'";
-$result = $conn->query($sql);
-$user = $result->fetch_assoc();
-$namalengkap = $user['namalengkap'];
 
-// Check if the user's location has been set
-if (empty($user['gps'])) {
-    // Redirect the user to the location input page
-    header("Location: location_input.php");
-    exit;
-}
 
 $conn->close();
 ?>
@@ -63,10 +120,9 @@ $conn->close();
 <html>
 
 <head>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css">
-
     <style>
         #sidebar {
             width: 200px;
@@ -97,6 +153,13 @@ $conn->close();
             width: 100%;
         }
 
+        .modal-dialog {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
         .notification-group {
             display: flex;
             align-items: center;
@@ -121,21 +184,21 @@ $conn->close();
 </head>
 
 <body>
-<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
-    <a class="navbar-brand" href="#">
-    <img src="../assets/img/logo/ThriveTerra_Logo.png" alt="Logo Thrive Terra" style="height: 50px; width: 120px; margin-right: px;">        User - Dashboard
-    </a>
-    <div class="navbar-text ml-auto d-flex align-items-center">
-        <div style="flex-grow: 1; text-align: right;">Selamat datang, <?php echo $namalengkap; ?> &nbsp;</div>
-        <div id="notification-icon" class="notification-group">
-            <i class="fas fa-bell bell-icon"></i>
-            <span class="notification-bubble"><?php echo $num_notifications; ?></span>
-        </div>
-        <a href="logout" class="ml-3">
-            <i class="fas fa-door-open"></i> Keluar
+    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+        <a class="navbar-brand" href="#">
+            <img src="../assets/img/logo/ThriveTerra_Logo.png" alt="Logo Thrive Terra" style="height: 50px; width: 120px; margin-right: px;"> User - Dashboard
         </a>
-    </div>
-</nav>
+        <div class="navbar-text ml-auto d-flex align-items-center">
+            <div style="flex-grow: 1; text-align: right;">Selamat datang, <?php echo $namalengkap; ?> &nbsp;</div>
+            <div id="notification-icon" class="notification-group">
+                <i class="fas fa-bell bell-icon"></i>
+                <span class="notification-bubble"><?php echo $num_notifications; ?></span>
+            </div>
+            <a href="logout" class="ml-3">
+                <i class="fas fa-door-open"></i> Keluar
+            </a>
+        </div>
+    </nav>
 
     <div id="notificationTooltip" style="display: none;">
         <button id="closeTooltip" style="float: right;">
@@ -150,6 +213,9 @@ $conn->close();
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="hasilpengajuan">Hasil Pengajuan</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="riwayatpersetujuan">Riwayat Persetujuan</a>
             </li>
         </ul>
     </div>
